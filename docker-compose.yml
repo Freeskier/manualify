@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  web_api:
+    container_name: web_api
+    build: ./api
+    ports: ["5000:80"]
+    networks: [elk-network]
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    ports: ["9200:9200"]
+    networks:
+      - elk-network
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    ports: ["5601:5601"]
+    networks:
+      - elk-network
+    depends_on: [elasticsearch]
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - KIBANA_SYSTEM_PASSWORD=123qweASD
+      - xpack.security.enabled=false
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
+    ports:
+      - "8080:8080"
+
+  caddy:
+    image: caddy/caddy:latest
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./client/index.html:/var/www/html/index.html
+    networks:
+      - elk-network
+networks:
+  elk-network:
+    driver: bridge
