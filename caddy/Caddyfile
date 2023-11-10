@@ -1,0 +1,11 @@
+localhost {
+    root * /var/www/html
+    file_server browse
+    log {
+        output net logstash:6000
+        format json
+        level info
+        # format elastic
+    }
+
+}

@@ -14,8 +14,13 @@ builder.Host.UseSerilog((context, configuration) => {
     NumberOfReplicas = 1
   })
   .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
+  .Enrich.WithClientIp()
+  .Enrich.WithCorrelationId()
+  .Enrich.WithRequestHeader(headerName: "User-Agent")
   .ReadFrom.Configuration(context.Configuration);
 });
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

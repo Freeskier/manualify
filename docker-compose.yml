@@ -25,29 +25,45 @@ services:
     container_name: kibana
     image: docker.elastic.co/kibana/kibana:8.11.0
     ports: ["5601:5601"]
-    networks:
-      - elk-network
+    networks: [elk-network]
     depends_on: [elasticsearch]
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    networks: [elk-network]
+    depends_on: [elasticsearch]
+    volumes:
+      - ./logstash/pipeline.conf:/usr/share/logstash/pipeline.conf:ro
+    environment:
+      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+      - "path.config=/usr/share/logstash/pipeline.conf"
 
   cadvisor:
     container_name: cadvisor
     image: gcr.io/cadvisor/cadvisor:latest
     ports:
       - "8080:8080"
+    # command: 
+    #   - --storage_driver=elasticsearch 
+    #   - --storage_driver_es_host=http://elasticsearch:9200
+    #   - --storage_driver_es_enable_sniffer=false
+    #   - --storage_driver_buffer_duration=1s
+    networks: [elk-network]
 
   caddy:
-    image: caddy/caddy:latest
+    build: ./caddy
     container_name: caddy
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./client/index.html:/var/www/html/index.html
-    networks:
-      - elk-network
+    networks: [elk-network]
+
 networks:
   elk-network:
     driver: bridge
