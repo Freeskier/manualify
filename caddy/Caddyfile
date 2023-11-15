@@ -2,10 +2,9 @@ localhost {
     root * /var/www/html
     file_server browse
     log {
-        output net logstash:6000
-        format json
+        output stdout
+        #format elastic
         level info
-        # format elastic
     }
 
 }

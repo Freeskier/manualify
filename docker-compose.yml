@@ -1,69 +1,101 @@
 version: "3.9"
 
+x-common-container: &common-container
+  restart: unless-stopped
+  networks: [elk-network]
+
+x-elk-environment: &elk-environment
+  ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+  ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+
+x-elk-build-args: &elk-build-args
+  args:
+    ELK_VERSION: ${ELK_VERSION}
+
 services:
   web_api:
+    <<: *common-container
     container_name: web_api
     build: ./api
     ports: ["5000:80"]
-    networks: [elk-network]
-
-  elasticsearch:
-    container_name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    networks:
-      - elk-network
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
-
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:8.11.0
-    ports: ["5601:5601"]
-    networks: [elk-network]
-    depends_on: [elasticsearch]
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-
-  logstash:
-    container_name: logstash
-    image: docker.elastic.co/logstash/logstash:8.11.0
-    networks: [elk-network]
-    depends_on: [elasticsearch]
-    volumes:
-      - ./logstash/pipeline.conf:/usr/share/logstash/pipeline.conf:ro
-    environment:
-      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
-      - "path.config=/usr/share/logstash/pipeline.conf"
-
-  cadvisor:
-    container_name: cadvisor
-    image: gcr.io/cadvisor/cadvisor:latest
-    ports:
-      - "8080:8080"
-    # command: 
-    #   - --storage_driver=elasticsearch 
-    #   - --storage_driver_es_host=http://elasticsearch:9200
-    #   - --storage_driver_es_enable_sniffer=false
-    #   - --storage_driver_buffer_duration=1s
-    networks: [elk-network]
 
   caddy:
-    build: ./caddy
+    <<: *common-container
     container_name: caddy
+    build: ./caddy
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./client/index.html:/var/www/html/index.html
-    networks: [elk-network]
+
+  elasticsearch:
+    <<: *common-container
+    container_name: elasticsearch
+    build:
+      context: ./elasticsearch
+      <<: *elk-build-args
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - secrets:/usr/share/elasticsearch/config/secrets:rw
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      <<: *elk-environment
+
+  kibana:
+    <<: *common-container
+    container_name: kibana
+    build:
+      context: ./kibana
+      <<: *elk-build-args
+    ports: ["5601:5601"]
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - secrets:/usr/share/kibana/config/secrets:ro
+    depends_on: [elasticsearch]
+    environment:
+      <<: *elk-environment
+
+  logstash:
+    <<: *common-container
+    container_name: logstash
+    build:
+      context: ./logstash
+      <<: *elk-build-args
+    volumes:
+      - ./logstash/pipeline.conf:/usr/share/logstash/pipeline.conf:ro
+      - secrets:/usr/share/logstash/config/secrets:ro
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      PATH_CONFIG: /usr/share/logstash/pipeline.conf
+      <<: *elk-environment
+    depends_on: [elasticsearch]
+
+  metricbeat:
+    <<: *common-container
+    container_name: metricbeat
+    build:
+      context: ./metricbeat
+      <<: *elk-build-args
+    volumes:
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - secrets:/usr/share/metricbeat/config/secrets:ro
+    depends_on: [elasticsearch]
+    environment:
+      <<: *elk-environment
 
 networks:
   elk-network:
     driver: bridge
+
+volumes:
+  secrets:
