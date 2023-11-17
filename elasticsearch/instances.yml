@@ -1,5 +1,0 @@
-instances:
-  - name: "elasticsearch"
-  - name: "kibana"
-  - name: "logstash"
-  - name: "metricbeat"

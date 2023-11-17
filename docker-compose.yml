@@ -37,14 +37,15 @@ services:
       context: ./elasticsearch
       <<: *elk-build-args
     volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
-      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - secrets:/usr/share/elasticsearch/config/secrets:rw
+      # - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
+      - ./secrets:/usr/share/elasticsearch/config/certs:rw
+      - ./secrets/kibana:/usr/share/elasticsearch/kibana-server:rw
     ulimits:
       memlock:
         soft: -1
         hard: -1
     environment:
+      DISCOVERY_TYPE: single-node
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
       <<: *elk-environment
 
@@ -55,10 +56,9 @@ services:
       context: ./kibana
       <<: *elk-build-args
     ports: ["5601:5601"]
-    volumes:
-      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-      - secrets:/usr/share/kibana/config/secrets:ro
     depends_on: [elasticsearch]
+    #volumes:
+      #- ./secrets/kibana:/usr/share/kibana/kibana-server:ro
     environment:
       <<: *elk-environment
 
@@ -70,7 +70,7 @@ services:
       <<: *elk-build-args
     volumes:
       - ./logstash/pipeline.conf:/usr/share/logstash/pipeline.conf:ro
-      - secrets:/usr/share/logstash/config/secrets:ro
+      - secrets-ca:/usr/share/logstash/config/secrets:ro
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
       PATH_CONFIG: /usr/share/logstash/pipeline.conf
@@ -88,7 +88,7 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
-      - secrets:/usr/share/metricbeat/config/secrets:ro
+      - secrets-ca:/usr/share/metricbeat/config/secrets:ro
     depends_on: [elasticsearch]
     environment:
       <<: *elk-environment
@@ -98,4 +98,5 @@ networks:
     driver: bridge
 
 volumes:
-  secrets:
+  secrets-ca:
+  secrets-kibana:

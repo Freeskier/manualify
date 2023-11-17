@@ -2,17 +2,11 @@ ARG ELK_VERSION
 
 FROM docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
 
-WORKDIR /usr/share/elasticsearch/config
+ENV discovery.type=single-node
 
-COPY ./certs-generator.sh certs-generator.sh
-COPY ./instances.yml instances.yml
+WORKDIR /usr/share/elasticsearch
 
-USER root
-
-RUN chmod +x certs-generator.sh
-
-RUN ./certs-generator.sh
-
-USER elasticsearch
+RUN echo "csr-bundle.zip" | bin/elasticsearch-certutil csr -name kibana-server -dns localhost
+RUN unzip csr-bundle.zip
 
 ENTRYPOINT [ "/bin/tini", "--", "/usr/local/bin/docker-entrypoint.sh" ]
