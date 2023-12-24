@@ -1,13 +1,8 @@
-server.name: kibana
-server.host: 0.0.0.0
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: [ "https://elasticsearch:9200" ]
+monitoring.ui.container.elasticsearch.enabled: true
 
-elasticsearch.hosts: ["https://elasticsearch:9200"]
-elasticsearch.ssl.certificateAuthorities:
-  ["/usr/share/kibana/config/secrets/ca/ca.crt"]
-
-xpack.security.enabled: true
-
+server.ssl.certificate: /usr/share/kibana/kibana-server/kibana-server.crt
+server.ssl.key: /usr/share/kibana/kibana-server/kibana-server.key
 server.ssl.enabled: true
-server.ssl.certificate: /usr/share/kibana/config/secrets/kibana/kibana.crt
-server.ssl.key: /usr/share/kibana/config/secrets/kibana/kibana.key
-server.ssl.certificateAuthorities: /usr/share/kibana/config/secrets/ca/ca.crt
