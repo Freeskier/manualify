@@ -1,0 +1,43 @@
+---
+import "@fontsource/ubuntu-mono";
+import "@fontsource/poppins";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Manualify</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+
+  <style is:global>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --clr-bg: #2c2c2c;
+      --clr-text: white;
+      --clr-neutral-500: #909090;
+      --clr-neutral-300: #232323;
+      --clr-green-400: #3fa56a;
+    }
+    body {
+      background-color: var(--clr-bg);
+      font-family: Poppins;
+    }
+
+    h2 {
+      color: var(--clr-text);
+    }
+  </style>
+</html>
