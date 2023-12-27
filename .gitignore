@@ -3,3 +3,5 @@
 **/obj
 **/bin
 **/elasticsearch/data
+dist/
+.astro/

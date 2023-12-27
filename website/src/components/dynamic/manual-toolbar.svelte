@@ -1,6 +1,4 @@
 <script>
-
-
 </script>
 
 <div class="manual__toolbar-container">
@@ -8,9 +6,11 @@
   <button>B</button>
   <button>C</button>
   <button>D</button>
-
 </div>
 
 <style>
-
+  .manual__toolbar-container {
+    display: grid;
+    grid-auto-flow: column;
+  }
 </style>

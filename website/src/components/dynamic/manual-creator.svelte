@@ -1,13 +1,12 @@
 <script>
   import ManualStep from "./manual-step.svelte";
-
 </script>
-<div class="manual__container">
-  <ManualStep index={1} title="This is my first step" state="done"/>
-  <ManualStep index={1} title="This is my first step" state="done"/>
-  <ManualStep index={1} title="This is my first step" state="done"/>
 
-  <ManualStep index={2} title="This is my second step" state="editing"/>
+<div class="manual__container">
+  <ManualStep index={1} title="This is my first step" stepState="done" />
+  <ManualStep index={2} title="This is my second step" stepState="done" />
+  <ManualStep index={3} title="This is my third step" stepState="done" />
+  <ManualStep index={4} title="This is my fourth step" stepState="editing" />
 </div>
 
 <style>

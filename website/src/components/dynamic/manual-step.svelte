@@ -1,37 +1,105 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import Chevron from "../../assets/svgs/chevron.svelte";
+  import { dndzone, type DndEvent } from "svelte-dnd-action";
+  import { flip } from "svelte/animate";
+  import ManualToolbar from "./manual-toolbar.svelte";
+
+  type IProps = {
+    index: number;
+    title: string;
+    stepState: StepState;
+  };
 
   type StepState = "editing" | "important" | "done";
 
-  export let index: number;
-  export let title: string;
-  export let state: StepState = "editing";
+  type StepComponent = {
+    id: number;
+    text: string;
+  };
 
-  let isOpen: boolean = true;
+  const { index, title, stepState } = $props<IProps>();
 
-  function onClick() {
-    isOpen = !isOpen;
+  let isStepOpen = $state(true);
+  let dragDisabled = $state(true);
+  const FLIP_DURATION = 300;
+
+  function onStepOpenClick() {
+    isStepOpen = !isStepOpen;
+  }
+
+  let stepComponents = $state<StepComponent[]>([
+    {
+      id: 1,
+      text: "Item 1",
+    },
+    {
+      id: 2,
+      text: "Item 2",
+    },
+    {
+      id: 3,
+      text: "Item 3",
+    },
+  ]);
+
+  function handleConsider(e: CustomEvent<DndEvent<StepComponent>>) {
+    stepComponents = e.detail.items;
+    dragDisabled = true;
+  }
+
+  function handleFinalize(e: CustomEvent<DndEvent<StepComponent>>) {
+    stepComponents = e.detail.items;
+    dragDisabled = true;
   }
 </script>
 
 <div
   class="manual__step-container"
-  class:expanded={isOpen}
-  class:done={state === "done"}
-  class:editing={state === "editing"}
+  class:expanded={isStepOpen}
+  class:done={stepState === "done"}
+  class:editing={stepState === "editing"}
 >
   <div class="manual__step-icon"></div>
-  <div on:click={onClick} class="manual__step-heading">
+  <div class="manual__step-heading">
     <h2 class="manual__step-ordinal_number">#{index}</h2>
     <h2>{title}</h2>
     <div class="manual__step-heading_options">
-      <Icon icon="mi:options-vertical" width={35} />
-      <Icon icon="mi:options-vertical" width={35} />
+      <button><Icon icon="ic:outline-edit" width={30} /></button>
+      <button on:click={onStepOpenClick}>
+        <Chevron isOpen={isStepOpen} size={25} />
+      </button>
+      <button><Icon icon="mi:options-vertical" width={30} /></button>
     </div>
   </div>
   <div class="manual__step-line" />
-  <div class="wrapper">
-    <div class="test blue"></div>
+  <div class="manual__step-content_wrapper">
+    <div
+      class="manual__step-content"
+      use:dndzone={{
+        items: stepComponents,
+        flipDurationMs: FLIP_DURATION,
+        dragDisabled,
+      }}
+      on:consider={handleConsider}
+      on:finalize={handleFinalize}
+    >
+      {#each stepComponents as item (item.id)}
+        <div
+          class="manual__step-component_container"
+          animate:flip={{ duration: FLIP_DURATION }}
+        >
+          {item.text}
+          <button
+            class="manual__step-component_drag-handle"
+            on:pointerdown={(e) => (dragDisabled = false)}
+          >
+            <Icon icon="mdi:drag-vertical" width="40" />
+          </button>
+        </div>
+      {/each}
+      <ManualToolbar />
+    </div>
   </div>
 </div>
 
@@ -51,6 +119,10 @@
 
   .manual__step-container.expanded {
     grid-template-rows: var(--heading-size) 1fr var(--spacing-bottom);
+  }
+
+  .manual__step-container.expanded .manual__step-content_wrapper {
+    opacity: 1;
   }
 
   .manual__step-container.done {
@@ -83,6 +155,10 @@
     translate: -45% 0;
   }
 
+  .manual__step-container svg {
+    color: var(--clr-neutral-500);
+  }
+
   .manual__step-heading {
     display: flex;
     align-items: center;
@@ -103,17 +179,50 @@
 
   .manual__step-heading_options {
     margin-left: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 2rem);
+    gap: 0.5rem;
+  }
+
+  .manual__step-heading_options button {
+    color: var(--clr-neutral-500);
+    position: relative;
     display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .wrapper {
+  .manual__step-heading_options button::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background-color: var(--clr-neutral-500);
+    opacity: 0;
+    aspect-ratio: 1;
+    width: 2rem;
+    transition: all 0.15s ease-out;
+  }
+  .manual__step-heading_options button:hover::before {
+    opacity: 0.15s;
+    width: 2.5rem;
+  }
+
+  .manual__step-content_wrapper {
     overflow: hidden;
+    opacity: 0;
+    transition: opacity 300ms ease-in;
   }
 
-  .test {
-    height: 300px;
+  .manual__step-content {
     background-color: var(--clr-neutral-300);
     border-top: 3px solid var(--clr-step-accent);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 4rem;
   }
 
   .manual__step-line {
@@ -150,5 +259,18 @@
     opacity: 0.3;
     border-radius: 50%;
     z-index: -1;
+  }
+
+  .manual__step-component_container {
+    position: relative;
+    border: 1px solid var(--clr-neutral-500);
+    height: 5rem;
+  }
+
+  .manual__step-component_drag-handle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    translate: -100% -50%;
   }
 </style>

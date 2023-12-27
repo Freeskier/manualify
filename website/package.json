@@ -16,10 +16,12 @@
     "@fontsource/ubuntu-mono": "^5.0.18",
     "astro": "^4.0.7",
     "astro-icon": "^0.8.2",
-    "svelte": "^4.2.8",
+    "svelte": "^5.0.0-next.26",
+    "svelte-dnd-action": "^0.9.38",
     "typescript": "^5.3.3"
   },
   "devDependencies": {
-    "@iconify/svelte": "^3.1.6"
+    "@iconify/svelte": "^3.1.6",
+    "svelte-highlight": "^7.4.6"
   }
 }
