@@ -1,73 +1,79 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import Chevron from "../../assets/svgs/chevron.svelte";
+  import Chevron from "../../assets/icons/chevron.svelte";
   import { dndzone, type DndEvent } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import ManualToolbar from "./manual-toolbar.svelte";
+  import type {
+    ManualComponent,
+    ManualComponentOption,
+    ManualStepState,
+  } from "../../global/types";
 
   type IProps = {
+    id: string;
     index: number;
     title: string;
-    stepState: StepState;
+    stepState: ManualStepState;
+    isOpen: boolean;
+    toggleOpen: () => void;
+    components: ManualComponent[];
+    updateComponents: (newComponents: ManualComponent[]) => void;
   };
 
-  type StepState = "editing" | "important" | "done";
+  const {
+    index,
+    title,
+    stepState,
+    id,
+    isOpen,
+    toggleOpen,
+    components,
+    updateComponents,
+  } = $props<IProps>();
 
-  type StepComponent = {
-    id: number;
-    text: string;
-  };
-
-  const { index, title, stepState } = $props<IProps>();
-
-  let isStepOpen = $state(true);
   let dragDisabled = $state(true);
   const FLIP_DURATION = 300;
 
-  function onStepOpenClick() {
-    isStepOpen = !isStepOpen;
-  }
-
-  let stepComponents = $state<StepComponent[]>([
-    {
-      id: 1,
-      text: "Item 1",
-    },
-    {
-      id: 2,
-      text: "Item 2",
-    },
-    {
-      id: 3,
-      text: "Item 3",
-    },
-  ]);
-
-  function handleConsider(e: CustomEvent<DndEvent<StepComponent>>) {
-    stepComponents = e.detail.items;
+  function handleConsider(e: CustomEvent<DndEvent<ManualComponent>>) {
+    updateComponents(e.detail.items);
     dragDisabled = true;
   }
 
-  function handleFinalize(e: CustomEvent<DndEvent<StepComponent>>) {
-    stepComponents = e.detail.items;
+  function handleFinalize(e: CustomEvent<DndEvent<ManualComponent>>) {
+    updateComponents(e.detail.items);
     dragDisabled = true;
+  }
+
+  function handleToolbarClick(component: ManualComponentOption) {
+    updateComponents([
+      ...components,
+      {
+        id: self.crypto.randomUUID(),
+        content: component,
+        index: component.length + 1,
+        type: component,
+      },
+    ]);
   }
 </script>
 
 <div
-  class="manual__step-container"
-  class:expanded={isStepOpen}
+  class="manual__step-container manual__step-container-step_in"
+  class:expanded={isOpen}
   class:done={stepState === "done"}
   class:editing={stepState === "editing"}
+  on:animationend={(e) => (e.target as HTMLDivElement).classList.remove('manual__step-container-step_in')}
 >
   <div class="manual__step-icon"></div>
   <div class="manual__step-heading">
-    <h2 class="manual__step-ordinal_number">#{index}</h2>
-    <h2>{title}</h2>
+    <div class="manual__step-heading-title">
+      <h2 class="manual__step-ordinal_number">#{index}</h2>
+      <h2>{title}</h2>
+    </div>
     <div class="manual__step-heading_options">
-      <button><Icon icon="ic:outline-edit" width={30} /></button>
-      <button on:click={onStepOpenClick}>
-        <Chevron isOpen={isStepOpen} size={25} />
+      <button on:click={toggleOpen}>
+        <Chevron {isOpen} size={25} />
       </button>
       <button><Icon icon="mi:options-vertical" width={30} /></button>
     </div>
@@ -77,19 +83,19 @@
     <div
       class="manual__step-content"
       use:dndzone={{
-        items: stepComponents,
+        items: components,
         flipDurationMs: FLIP_DURATION,
         dragDisabled,
       }}
       on:consider={handleConsider}
       on:finalize={handleFinalize}
     >
-      {#each stepComponents as item (item.id)}
+      {#each components as item (item.id)}
         <div
           class="manual__step-component_container"
           animate:flip={{ duration: FLIP_DURATION }}
         >
-          {item.text}
+          {item.content}
           <button
             class="manual__step-component_drag-handle"
             on:pointerdown={(e) => (dragDisabled = false)}
@@ -98,13 +104,14 @@
           </button>
         </div>
       {/each}
-      <ManualToolbar />
+      <ManualToolbar onAddComponent={handleToolbarClick} />
     </div>
   </div>
 </div>
 
 <style>
   .manual__step-container {
+    --move-in-duration: 300ms;
     --spacing-bottom: 3rem;
     --heading-size: 4rem;
     --clr-step-accent: var(--clr-neutral-500);
@@ -115,6 +122,11 @@
     transition: grid-template-rows 300ms ease-out;
     column-gap: 1.5rem;
     row-gap: 0.5rem;
+  }
+
+  :global(.manual__step-container-step_in) {
+    animation: move-in-container var(--move-in-duration) ease-in-out forwards;
+
   }
 
   .manual__step-container.expanded {
@@ -162,15 +174,24 @@
   .manual__step-heading {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+  
   }
 
-  .manual__step-heading h2 {
+  .manual__step-heading-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    translate: -15% 0;
+    animation: move-in-heading var(--move-in-duration) ease-in-out forwards;
+  }
+
+  .manual__step-heading-title h2 {
     font-size: 2.125rem;
     font-weight: 300;
   }
 
-  .manual__step-heading h2.manual__step-ordinal_number {
+  .manual__step-heading-title h2.manual__step-ordinal_number {
     font-family: "Ubuntu Mono", sans-serif;
     font-size: 2.5rem;
     color: #545454;
@@ -180,8 +201,10 @@
   .manual__step-heading_options {
     margin-left: auto;
     display: grid;
-    grid-template-columns: repeat(3, 2rem);
+    grid-template-columns: repeat(2, 2rem);
     gap: 0.5rem;
+    opacity: 0;
+    animation: move-in-heading-options var(--move-in-duration) ease-in-out forwards;
   }
 
   .manual__step-heading_options button {
@@ -206,7 +229,7 @@
     transition: all 0.15s ease-out;
   }
   .manual__step-heading_options button:hover::before {
-    opacity: 0.15s;
+    opacity: 0.15;
     width: 2.5rem;
   }
 
@@ -218,11 +241,22 @@
 
   .manual__step-content {
     background-color: var(--clr-neutral-300);
-    border-top: 3px solid var(--clr-step-accent);
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    padding: 2rem 4rem;
+    padding: 3rem 4rem;
+    position: relative;
+  }
+
+  .manual__step-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--clr-step-accent);
+    width: 0;
+    height: 3px;
+    animation: move-in-border var(--move-in-duration) ease-in-out forwards;
   }
 
   .manual__step-line {
@@ -249,6 +283,9 @@
     width: 3rem;
     align-self: center;
     justify-self: center;
+    scale: 0.4;
+    opacity: 0;
+    animation: move-in-icon var(--move-in-duration) ease-in-out forwards;
   }
 
   .manual__step-icon::before {
@@ -272,5 +309,46 @@
     left: 0;
     top: 50%;
     translate: -100% -50%;
+    color: var(--clr-neutral-200);
+    cursor: grab;
+  }
+
+  .manual__step-component_drag-handle:active {
+    cursor: grabbing;
+  }
+
+  @keyframes move-in-icon {
+    to {
+      scale: 1;
+      opacity: 1;
+    }
+  }
+
+  @keyframes move-in-heading {
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  @keyframes move-in-heading-options {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes move-in-container {
+    from {
+      grid-template-rows: var(--heading-size) 0fr 0rem;
+    }
+    to {
+      grid-template-rows: var(--heading-size) 1fr var(--spacing-bottom);
+    }
+  }
+
+  @keyframes move-in-border {
+    to {
+      width: 100%;
+    }
   }
 </style>

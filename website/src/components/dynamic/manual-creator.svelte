@@ -1,12 +1,18 @@
-<script>
+<script lang="ts">
   import ManualStep from "./manual-step.svelte";
+  import { stepsStore } from "./steps-store.svelte.ts";
+  import type { ManualComponent } from "../../global/types";
+  const stepStore = stepsStore();
 </script>
 
 <div class="manual__container">
-  <ManualStep index={1} title="This is my first step" stepState="done" />
-  <ManualStep index={2} title="This is my second step" stepState="done" />
-  <ManualStep index={3} title="This is my third step" stepState="done" />
-  <ManualStep index={4} title="This is my fourth step" stepState="editing" />
+  {#each stepStore.steps as step}
+    <ManualStep 
+      {...step} 
+      toggleOpen={() => stepStore.toggleOpen(step.id)} 
+      updateComponents={(newComponents: ManualComponent[]) => stepStore.updateComponents(newComponents, step.id)} />
+  {/each}
+  <button on:click={stepStore.addNewStep}>Add Step</button>
 </div>
 
 <style>
