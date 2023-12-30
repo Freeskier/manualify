@@ -14,6 +14,7 @@ export type ManualComponent = {
   index: number;
   type: ManualComponentOption;
   content: string;
+  isAnimatedOnAdd: boolean;
 };
 
 export type ManualStep = {

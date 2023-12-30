@@ -9,6 +9,8 @@
     ManualComponentOption,
     ManualStepState,
   } from "../../global/types";
+  import ManualStepComponent from "./manual-step-component.svelte";
+  import { stepsStore } from "./steps-store.svelte";
 
   type IProps = {
     id: string;
@@ -16,9 +18,7 @@
     title: string;
     stepState: ManualStepState;
     isOpen: boolean;
-    toggleOpen: () => void;
     components: ManualComponent[];
-    updateComponents: (newComponents: ManualComponent[]) => void;
   };
 
   const {
@@ -27,21 +27,21 @@
     stepState,
     id,
     isOpen,
-    toggleOpen,
     components,
-    updateComponents,
   } = $props<IProps>();
+
+  let {updateComponents, toggleOpen} = stepsStore
 
   let dragDisabled = $state(true);
   const FLIP_DURATION = 300;
 
   function handleConsider(e: CustomEvent<DndEvent<ManualComponent>>) {
-    updateComponents(e.detail.items);
+    updateComponents(e.detail.items, id);
     dragDisabled = true;
   }
 
   function handleFinalize(e: CustomEvent<DndEvent<ManualComponent>>) {
-    updateComponents(e.detail.items);
+    updateComponents(e.detail.items, id);
     dragDisabled = true;
   }
 
@@ -53,8 +53,9 @@
         content: component,
         index: component.length + 1,
         type: component,
+        isAnimatedOnAdd: false
       },
-    ]);
+    ], id);
   }
 </script>
 
@@ -72,7 +73,7 @@
       <h2>{title}</h2>
     </div>
     <div class="manual__step-heading_options">
-      <button on:click={toggleOpen}>
+      <button on:click={() => toggleOpen(id)}>
         <Chevron {isOpen} size={25} />
       </button>
       <button><Icon icon="mi:options-vertical" width={30} /></button>
@@ -86,22 +87,15 @@
         items: components,
         flipDurationMs: FLIP_DURATION,
         dragDisabled,
+        dropFromOthersDisabled: !isOpen,
+        dropTargetClasses: ["drop-target"]
       }}
       on:consider={handleConsider}
       on:finalize={handleFinalize}
     >
-      {#each components as item (item.id)}
-        <div
-          class="manual__step-component_container"
-          animate:flip={{ duration: FLIP_DURATION }}
-        >
-          {item.content}
-          <button
-            class="manual__step-component_drag-handle"
-            on:pointerdown={(e) => (dragDisabled = false)}
-          >
-            <Icon icon="mdi:drag-vertical" width="40" />
-          </button>
+      {#each components as component (component.id)}
+        <div animate:flip={{ duration: FLIP_DURATION }}>
+          <ManualStepComponent {component} setDisabled={(value) => dragDisabled = value}/>
         </div>
       {/each}
       <ManualToolbar onAddComponent={handleToolbarClick} />
@@ -237,18 +231,20 @@
     overflow: hidden;
     opacity: 0;
     transition: opacity 300ms ease-in;
-  }
-
-  .manual__step-content {
     background-color: var(--clr-neutral-300);
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 3rem 4rem;
+    padding-inline: 2rem;
     position: relative;
   }
 
-  .manual__step-content::before {
+  .manual__step-content {
+    display: flex;
+    flex-direction: column; 
+    outline: none !important;
+    min-height: 0 !important;
+  }
+
+
+  .manual__step-content_wrapper::before {
     content: '';
     position: absolute;
     top: 0;
@@ -296,25 +292,6 @@
     opacity: 0.3;
     border-radius: 50%;
     z-index: -1;
-  }
-
-  .manual__step-component_container {
-    position: relative;
-    border: 1px solid var(--clr-neutral-500);
-    height: 5rem;
-  }
-
-  .manual__step-component_drag-handle {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    translate: -100% -50%;
-    color: var(--clr-neutral-200);
-    cursor: grab;
-  }
-
-  .manual__step-component_drag-handle:active {
-    cursor: grabbing;
   }
 
   @keyframes move-in-icon {

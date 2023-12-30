@@ -39,7 +39,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 2.5rem;
+    margin-bottom: 2rem;
+    margin-top: 3rem;
   }
 
   .manual__toolbar-container > * {
@@ -50,10 +51,10 @@
     content: "";
     position: absolute;
     width: 2px;
-    height: 2rem;
-    top: -3rem;
+    height: 1.5rem;
+    top: -2rem;
     left: 50%;
-    translate: -70% 0;
+    translate: -50% 0;
     background-color: var(--clr-neutral-400);
   }
 
