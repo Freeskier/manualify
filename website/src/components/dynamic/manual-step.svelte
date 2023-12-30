@@ -36,7 +36,7 @@
   }
 </script>
 
-<TransitionContainer let:onDelete animationStart={0.5}>
+<TransitionContainer let:onDelete>
   <div
     class="manual__step-container"
     class:expanded={isOpen}

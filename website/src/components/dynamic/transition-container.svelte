@@ -47,7 +47,7 @@
   }
 
   .transition-container__wrapper.delete {
-    animation: onDelete 3000ms ease-out forwards;
+    animation: onDelete 300ms ease-out forwards;
   }
 
   .transition-container {
@@ -71,7 +71,7 @@
 
     to {
       grid-template-rows: 0fr;
-      /* opacity: 0; */
+      opacity: 0;
     }
   }
 </style>

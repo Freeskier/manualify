@@ -1,13 +1,14 @@
 <script lang="ts">
   import ManualStep from "./manual-step.svelte";
   import { stepsStore } from "./steps-store.svelte.ts";
+  let { steps, addNewStep } = stepsStore;
 </script>
 
 <div class="manual__container">
-  {#each stepsStore.steps as step}
+  {#each steps as step (step.id)}
     <ManualStep {...step} />
   {/each}
-  <button on:click={stepsStore.addNewStep}>Add Step</button>
+  <button on:click={addNewStep}>Add Step</button>
 </div>
 
 <style>

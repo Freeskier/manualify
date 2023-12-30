@@ -15,6 +15,8 @@ export const stepsStore = {
       stepState: "done",
       isOpen: true,
     });
+    steps = steps;
+    console.log(steps);
   },
   toggleOpen: (id: string) => {
     let step = findStep(id);
@@ -34,7 +36,11 @@ export const stepsStore = {
     updateComponentIndex();
   },
   deleteStep: (id: string) => {
-    steps = steps.filter((x) => x.id !== id);
+    steps.splice(
+      steps.findIndex((x) => x.id === id),
+      1
+    );
+    updateStepIndex();
   },
 };
 
@@ -60,4 +66,8 @@ function updateComponentIndex() {
     x.index = i;
     indexes[x.type] = i;
   });
+}
+
+function updateStepIndex() {
+  steps.forEach((step, index) => (step.index = index + 1));
 }
