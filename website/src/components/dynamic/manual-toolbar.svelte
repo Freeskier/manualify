@@ -8,29 +8,53 @@
   import LinkIcon from "../../assets/icons/link-icon.svelte";
   import TagIcon from "../../assets/icons/tag-icon.svelte";
   import Icon from "@iconify/svelte";
-  import type { ManualComponentOption } from "../../global/types.ts";
+  import type {
+    ManualComponent,
+    ManualComponentOption,
+  } from "../../global/types.ts";
+  import { stepsStore } from "./steps-store.svelte";
 
   type IProps = {
-    onAddComponent: (component: ManualComponentOption) => void;
+    stepId: string;
+    components: ManualComponent[];
   };
 
-  const { onAddComponent } = $props<IProps>();
+  let { stepId, components } = $props<IProps>();
+  let { updateComponents } = stepsStore;
+
+  function handleToolbarClick(component: ManualComponentOption) {
+    updateComponents(
+      [
+        ...components,
+        {
+          id: self.crypto.randomUUID(),
+          content: component,
+          index: component.length + 1,
+          type: component,
+          isAnimatedOnAdd: false,
+        },
+      ],
+      stepId
+    );
+  }
 </script>
 
 <div class="manual__toolbar-container">
-  <button on:click={() => onAddComponent("text")}><AddDocIcon /></button>
-  <button on:click={() => onAddComponent("checkbox")}><ChecklistIcon /></button>
-  <button on:click={() => onAddComponent("table")}><AddTableIcon /></button>
-  <button on:click={() => onAddComponent("image")}><AddImgIcon /></button>
+  <button on:click={() => handleToolbarClick("text")}><AddDocIcon /></button>
+  <button on:click={() => handleToolbarClick("checkbox")}
+    ><ChecklistIcon /></button
+  >
+  <button on:click={() => handleToolbarClick("table")}><AddTableIcon /></button>
+  <button on:click={() => handleToolbarClick("image")}><AddImgIcon /></button>
   <Icon
     width="35"
     icon="material-symbols:add"
     class="manual__toolbar-container-add_icon"
   />
-  <button on:click={() => onAddComponent("quote")}><QuoteIcon /></button>
-  <button on:click={() => onAddComponent("code")}><CodeIcon /></button>
-  <button on:click={() => onAddComponent("link")}><LinkIcon /></button>
-  <button on:click={() => onAddComponent("link")}><TagIcon /></button>
+  <button on:click={() => handleToolbarClick("quote")}><QuoteIcon /></button>
+  <button on:click={() => handleToolbarClick("code")}><CodeIcon /></button>
+  <button on:click={() => handleToolbarClick("link")}><LinkIcon /></button>
+  <button on:click={() => handleToolbarClick("link")}><TagIcon /></button>
 </div>
 
 <style>

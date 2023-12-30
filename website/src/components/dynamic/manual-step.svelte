@@ -4,13 +4,10 @@
   import { dndzone, type DndEvent } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import ManualToolbar from "./manual-toolbar.svelte";
-  import type {
-    ManualComponent,
-    ManualComponentOption,
-    ManualStepState,
-  } from "../../global/types";
+  import type { ManualComponent, ManualStepState } from "../../global/types";
   import ManualStepComponent from "./manual-step-component.svelte";
   import { stepsStore } from "./steps-store.svelte";
+  import TransitionContainer from "./transition-container.svelte";
 
   type IProps = {
     id: string;
@@ -21,16 +18,9 @@
     components: ManualComponent[];
   };
 
-  const {
-    index,
-    title,
-    stepState,
-    id,
-    isOpen,
-    components,
-  } = $props<IProps>();
+  const { index, title, stepState, id, isOpen, components } = $props<IProps>();
 
-  let {updateComponents, toggleOpen} = stepsStore
+  let { updateComponents, toggleOpen, deleteStep } = stepsStore;
 
   let dragDisabled = $state(true);
   const FLIP_DURATION = 300;
@@ -44,64 +34,57 @@
     updateComponents(e.detail.items, id);
     dragDisabled = true;
   }
-
-  function handleToolbarClick(component: ManualComponentOption) {
-    updateComponents([
-      ...components,
-      {
-        id: self.crypto.randomUUID(),
-        content: component,
-        index: component.length + 1,
-        type: component,
-        isAnimatedOnAdd: false
-      },
-    ], id);
-  }
 </script>
 
-<div
-  class="manual__step-container manual__step-container-step_in"
-  class:expanded={isOpen}
-  class:done={stepState === "done"}
-  class:editing={stepState === "editing"}
-  on:animationend={(e) => (e.target as HTMLDivElement).classList.remove('manual__step-container-step_in')}
->
-  <div class="manual__step-icon"></div>
-  <div class="manual__step-heading">
-    <div class="manual__step-heading-title">
-      <h2 class="manual__step-ordinal_number">#{index}</h2>
-      <h2>{title}</h2>
+<TransitionContainer let:onDelete animationStart={0.5}>
+  <div
+    class="manual__step-container"
+    class:expanded={isOpen}
+    class:done={stepState === "done"}
+    class:editing={stepState === "editing"}
+  >
+    <div class="manual__step-icon"></div>
+    <div class="manual__step-heading">
+      <div class="manual__step-heading-title">
+        <h2 class="manual__step-ordinal_number">#{index}</h2>
+        <h2>{title}</h2>
+      </div>
+      <div class="manual__step-heading_options">
+        <button on:click={() => toggleOpen(id)}>
+          <Chevron {isOpen} size={25} />
+        </button>
+        <button on:click={() => onDelete(() => deleteStep(id))}
+          ><Icon icon="mi:options-vertical" width={30} /></button
+        >
+      </div>
     </div>
-    <div class="manual__step-heading_options">
-      <button on:click={() => toggleOpen(id)}>
-        <Chevron {isOpen} size={25} />
-      </button>
-      <button><Icon icon="mi:options-vertical" width={30} /></button>
+    <div class="manual__step-line" />
+    <div class="manual__step-content_wrapper">
+      <div
+        class="manual__step-content"
+        use:dndzone={{
+          items: components,
+          flipDurationMs: FLIP_DURATION,
+          dragDisabled,
+          dropFromOthersDisabled: !isOpen,
+          dropTargetClasses: ["drop-target"],
+        }}
+        on:consider={handleConsider}
+        on:finalize={handleFinalize}
+      >
+        {#each components as component (component.id)}
+          <div animate:flip={{ duration: FLIP_DURATION }}>
+            <ManualStepComponent
+              {component}
+              setDisabled={(value) => (dragDisabled = value)}
+            />
+          </div>
+        {/each}
+        <ManualToolbar stepId={id} {components} />
+      </div>
     </div>
   </div>
-  <div class="manual__step-line" />
-  <div class="manual__step-content_wrapper">
-    <div
-      class="manual__step-content"
-      use:dndzone={{
-        items: components,
-        flipDurationMs: FLIP_DURATION,
-        dragDisabled,
-        dropFromOthersDisabled: !isOpen,
-        dropTargetClasses: ["drop-target"]
-      }}
-      on:consider={handleConsider}
-      on:finalize={handleFinalize}
-    >
-      {#each components as component (component.id)}
-        <div animate:flip={{ duration: FLIP_DURATION }}>
-          <ManualStepComponent {component} setDisabled={(value) => dragDisabled = value}/>
-        </div>
-      {/each}
-      <ManualToolbar onAddComponent={handleToolbarClick} />
-    </div>
-  </div>
-</div>
+</TransitionContainer>
 
 <style>
   .manual__step-container {
@@ -116,11 +99,6 @@
     transition: grid-template-rows 300ms ease-out;
     column-gap: 1.5rem;
     row-gap: 0.5rem;
-  }
-
-  :global(.manual__step-container-step_in) {
-    animation: move-in-container var(--move-in-duration) ease-in-out forwards;
-
   }
 
   .manual__step-container.expanded {
@@ -168,7 +146,6 @@
   .manual__step-heading {
     display: flex;
     align-items: center;
-  
   }
 
   .manual__step-heading-title {
@@ -198,7 +175,8 @@
     grid-template-columns: repeat(2, 2rem);
     gap: 0.5rem;
     opacity: 0;
-    animation: move-in-heading-options var(--move-in-duration) ease-in-out forwards;
+    animation: move-in-heading-options var(--move-in-duration) ease-in-out
+      forwards;
   }
 
   .manual__step-heading_options button {
@@ -238,14 +216,13 @@
 
   .manual__step-content {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     outline: none !important;
     min-height: 0 !important;
   }
 
-
   .manual__step-content_wrapper::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;

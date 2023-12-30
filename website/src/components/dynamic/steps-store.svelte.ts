@@ -25,13 +25,16 @@ export const stepsStore = {
     step.components = newComp;
     updateComponentIndex();
   },
-  markComponentAsAnimated: (id: string) => {
+  setComponentAsAnimated: (id: string) => {
     let component = findComponent(id);
     component.isAnimatedOnAdd = true;
   },
   deleteComponent: (id: string) => {
     steps.map((x) => (x.components = x.components.filter((x) => x.id !== id)));
     updateComponentIndex();
+  },
+  deleteStep: (id: string) => {
+    steps = steps.filter((x) => x.id !== id);
   },
 };
 

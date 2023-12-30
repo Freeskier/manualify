@@ -3,6 +3,7 @@
   import type { ManualComponent } from "../../global/types";
   import { stepsStore } from "./steps-store.svelte";
   import { getComponentName } from "../../utils/manual-utils.ts";
+  import TransitionContainer from "./transition-container.svelte";
 
   type IProps = {
     setDisabled: (value: boolean) => void;
@@ -10,16 +11,16 @@
   };
 
   const { component, setDisabled } = $props<IProps>();
-  let { isAnimatedOnAdd, index, id, type, content } = component;
-  let { markComponentAsAnimated, deleteComponent } = stepsStore;
+  let { id, type, content } = component;
+  let { setComponentAsAnimated, deleteComponent } = stepsStore;
 
   const componentName = getComponentName(type);
 </script>
 
-<div
-  class="manual__component-wrapper"
-  class:manual__component-step-in={!isAnimatedOnAdd}
-  on:animationend={(e) => markComponentAsAnimated(id)}
+<TransitionContainer
+  let:onDelete
+  setAnimated={() => setComponentAsAnimated(id)}
+  isAnimated={!component.isAnimatedOnAdd}
 >
   <div class="manual__component-container">
     <button
@@ -36,38 +37,27 @@
     </div>
     <button
       class="manual__component-delete"
-      on:click={() => deleteComponent(id)}
+      on:click={() => onDelete(() => deleteComponent(id))}
     >
       <Icon icon="tdesign:delete" width="25" />
     </button>
   </div>
-</div>
+</TransitionContainer>
 
 <style>
-  .manual__component-wrapper {
-    position: relative;
-    display: grid;
-    grid-template-rows: 1fr;
-    opacity: 1;
-    margin-top: 2rem;
-  }
-
-  .manual__component-wrapper h4 {
-    color: var(--clr-neutral-500);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-size: 1rem;
-  }
-
-  .manual__component-step-in {
-    animation: step-in-component 300ms ease-in-out forwards;
-  }
-
   .manual__component-container {
     position: relative;
     overflow: hidden;
     display: grid;
     grid-template-columns: 3rem 1fr 3rem;
+    margin-top: 2rem;
+  }
+
+  .manual__component-container h4 {
+    color: var(--clr-neutral-500);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 1rem;
   }
 
   .manual__component-content {
@@ -114,19 +104,5 @@
   .manual__component-delete:hover::before {
     opacity: 0.2;
     scale: 1;
-  }
-
-  @keyframes step-in-component {
-    from {
-      grid-template-rows: 0fr;
-      opacity: 0;
-      margin-top: 0rem;
-    }
-
-    to {
-      grid-template-rows: 1fr;
-      opacity: 1;
-      margin-top: 2rem;
-    }
   }
 </style>
