@@ -1,5 +1,6 @@
 import type { ManualComponent, ManualStep } from "../../global/types";
 
+//@ts-ignore
 let steps = $state<ManualStep[]>([]);
 
 export const stepsStore = {
@@ -16,7 +17,6 @@ export const stepsStore = {
       isOpen: true,
     });
     steps = steps;
-    console.log(steps);
   },
   toggleOpen: (id: string) => {
     let step = findStep(id);
@@ -43,17 +43,15 @@ export const stepsStore = {
     updateStepIndex();
   },
   moveStepUp: (id: string) => {
-    console.log(id)
-    let step = findStep(id)
-    moveStep(step.index, step.index - 1)
-    // updateStepIndex()
+    let step = findStep(id);
+    moveStep(step, "up");
+    updateStepIndex();
   },
   moveStepDown: (id: string) => {
-    console.log(id)
-    let step = findStep(id)
-    moveStep(step.index, step.index + 1)
-    // updateStepIndex()
-  }
+    let step = findStep(id);
+    moveStep(step, "down");
+    updateStepIndex();
+  },
 };
 
 function findStep(id: string) {
@@ -84,8 +82,12 @@ function updateStepIndex() {
   steps.forEach((step, index) => (step.index = index + 1));
 }
 
-function moveStep(fromIndex, toIndex) {
-  var element = steps[fromIndex];
+function moveStep(step: ManualStep, direction: "up" | "down") {
+  var fromIndex = steps.findIndex((x) => x.id === step.id);
+  var dir = direction === "up" ? -1 : 1;
+  var toIndex = fromIndex + dir;
+
+  if (toIndex < 0 || toIndex > steps.length) return;
   steps.splice(fromIndex, 1);
-  steps.splice(toIndex, 0, element);
+  steps.splice(toIndex, 0, step);
 }

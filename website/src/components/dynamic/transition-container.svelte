@@ -19,13 +19,15 @@
   function onDelete(callback: () => void) {
     wrapper?.addEventListener("animationend", callback);
     isDeleting = true;
-    wrapper?.querySelector('.transition-container')?.classList.remove('created')
+    wrapper
+      ?.querySelector(".transition-container")
+      ?.classList.remove("created");
   }
 
   function onAnimationEnd() {
-    if (setAnimated) setAnimated()
-    
-    wrapper?.querySelector('.transition-container')?.classList.add('created')
+    if (setAnimated) setAnimated();
+
+    wrapper?.querySelector(".transition-container")?.classList.add("created");
   }
 </script>
 

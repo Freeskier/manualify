@@ -1,14 +1,16 @@
 <script lang="ts">
+  import { flip } from "svelte/animate";
   import ManualStep from "./manual-step.svelte";
   import { stepsStore } from "./steps-store.svelte.ts";
-  let { steps, addNewStep } = stepsStore;
 </script>
 
 <div class="manual__container">
-  {#each steps as step (step.id)}
-    <ManualStep {...step} />
+  {#each stepsStore.steps as step (step.id)}
+    <div animate:flip={{ duration: 500 }}>
+      <ManualStep {...step} />
+    </div>
   {/each}
-  <button on:click={addNewStep}>Add Step</button>
+  <button on:click={stepsStore.addNewStep}>Add Step</button>
 </div>
 
 <style>

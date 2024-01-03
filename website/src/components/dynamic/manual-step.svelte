@@ -8,6 +8,7 @@
   import ManualStepComponent from "./manual-step-component.svelte";
   import { stepsStore } from "./steps-store.svelte";
   import TransitionContainer from "./transition-container.svelte";
+  import ManualStepOptions from "./manual-step-options.svelte";
 
   type IProps = {
     id: string;
@@ -20,7 +21,8 @@
 
   const { index, title, stepState, id, isOpen, components } = $props<IProps>();
 
-  let { updateComponents, toggleOpen, deleteStep, moveStepDown, moveStepUp } = stepsStore;
+  let { updateComponents, toggleOpen, deleteStep, moveStepDown, moveStepUp } =
+    stepsStore;
 
   let dragDisabled = $state(true);
   const FLIP_DURATION = 300;
@@ -53,12 +55,9 @@
         <button on:click={() => toggleOpen(id)}>
           <Chevron {isOpen} size={25} />
         </button>
-        <button on:click={() => onDelete(() => deleteStep(id))}
-          ><Icon icon="mi:options-vertical" width={30} /></button
-        >
-        <button on:click={() => moveStepUp(id)}>Up</button>
-        <button on:click={() => moveStepDown(id)}>Down</button>
-
+        <ManualStepOptions />
+        <!-- <button on:click={() => moveStepUp(id)}>Up</button>
+        <button on:click={() => moveStepDown(id)}>Down</button> -->
       </div>
     </div>
     <div class="manual__step-line" />

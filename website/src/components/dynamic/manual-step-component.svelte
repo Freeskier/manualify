@@ -73,36 +73,4 @@
   .manual__component-drag-handle:active {
     cursor: grabbing;
   }
-
-  .manual__component-delete {
-    --clr-delete: var(--clr-neutral-200);
-    color: var(--clr-delete);
-    position: relative;
-    transition: color 200ms ease-in-out;
-    align-self: center;
-  }
-
-  .manual__component-delete:hover {
-    --clr-delete: var(--clr-red-400);
-  }
-
-  .manual__component-delete::before {
-    content: "";
-    position: absolute;
-    width: 2.5rem;
-    aspect-ratio: 1;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
-    opacity: 0;
-    scale: 0.7;
-    background-color: var(--clr-delete);
-    border-radius: 50%;
-    transition: all 200ms ease-in-out;
-  }
-
-  .manual__component-delete:hover::before {
-    opacity: 0.2;
-    scale: 1;
-  }
 </style>
