@@ -19,6 +19,13 @@
   function onDelete(callback: () => void) {
     wrapper?.addEventListener("animationend", callback);
     isDeleting = true;
+    wrapper?.querySelector('.transition-container')?.classList.remove('created')
+  }
+
+  function onAnimationEnd() {
+    if (setAnimated) setAnimated()
+    
+    wrapper?.querySelector('.transition-container')?.classList.add('created')
   }
 </script>
 
@@ -29,7 +36,7 @@
   style={`--anim-start: ${animationStart}fr`}
   class:create={isAnimated}
   class:delete={isDeleting}
-  on:animationend={setAnimated}
+  on:animationend={onAnimationEnd}
 >
   <div class="transition-container">
     <slot {onDelete} />
@@ -52,6 +59,10 @@
 
   .transition-container {
     overflow: hidden;
+  }
+
+  .transition-container.created {
+    overflow: visible;
   }
 
   @keyframes onCreate {

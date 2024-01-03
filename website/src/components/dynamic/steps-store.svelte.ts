@@ -42,6 +42,18 @@ export const stepsStore = {
     );
     updateStepIndex();
   },
+  moveStepUp: (id: string) => {
+    console.log(id)
+    let step = findStep(id)
+    moveStep(step.index, step.index - 1)
+    // updateStepIndex()
+  },
+  moveStepDown: (id: string) => {
+    console.log(id)
+    let step = findStep(id)
+    moveStep(step.index, step.index + 1)
+    // updateStepIndex()
+  }
 };
 
 function findStep(id: string) {
@@ -70,4 +82,10 @@ function updateComponentIndex() {
 
 function updateStepIndex() {
   steps.forEach((step, index) => (step.index = index + 1));
+}
+
+function moveStep(fromIndex, toIndex) {
+  var element = steps[fromIndex];
+  steps.splice(fromIndex, 1);
+  steps.splice(toIndex, 0, element);
 }

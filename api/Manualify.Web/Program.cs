@@ -44,3 +44,4 @@ app.MapGet("/api/get", (ILogger<Program> logger) => {
 });
 
 app.Run();
+

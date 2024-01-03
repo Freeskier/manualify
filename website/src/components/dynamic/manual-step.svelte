@@ -20,7 +20,7 @@
 
   const { index, title, stepState, id, isOpen, components } = $props<IProps>();
 
-  let { updateComponents, toggleOpen, deleteStep } = stepsStore;
+  let { updateComponents, toggleOpen, deleteStep, moveStepDown, moveStepUp } = stepsStore;
 
   let dragDisabled = $state(true);
   const FLIP_DURATION = 300;
@@ -56,6 +56,9 @@
         <button on:click={() => onDelete(() => deleteStep(id))}
           ><Icon icon="mi:options-vertical" width={30} /></button
         >
+        <button on:click={() => moveStepUp(id)}>Up</button>
+        <button on:click={() => moveStepDown(id)}>Down</button>
+
       </div>
     </div>
     <div class="manual__step-line" />
@@ -99,6 +102,7 @@
     transition: grid-template-rows 300ms ease-out;
     column-gap: 1.5rem;
     row-gap: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 
   .manual__step-container.expanded {

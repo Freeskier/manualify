@@ -17,7 +17,6 @@
     margin: 0 auto;
     width: 100%;
     display: grid;
-    gap: 0.5rem;
     margin-top: 10rem;
   }
 </style>
