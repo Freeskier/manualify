@@ -4,7 +4,11 @@
   import { dndzone, type DndEvent } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import ManualToolbar from "./manual-toolbar.svelte";
-  import type { ManualComponent, ManualStepState } from "../../global/types";
+  import type {
+    ManualComponent,
+    ManualStepOption,
+    ManualStepState,
+  } from "../../global/types";
   import ManualStepComponent from "./manual-step-component.svelte";
   import { stepsStore } from "./steps-store.svelte";
   import TransitionContainer from "./transition-container.svelte";
@@ -27,18 +31,33 @@
   let dragDisabled = $state(true);
   const FLIP_DURATION = 300;
 
+  const stepOptions: ManualStepOption[] = [
+    {
+      icon: "mdi:arrow-up",
+      onClick: () => moveStepUp(id),
+      text: "Move step up",
+    },
+    {
+      icon: "mdi:arrow-down",
+      onClick: () => moveStepDown(id),
+      text: "Move step down",
+    },
+  ];
+
   function handleConsider(e: CustomEvent<DndEvent<ManualComponent>>) {
     updateComponents(e.detail.items, id);
     dragDisabled = true;
+    stepsStore.componentDragging = true;
   }
 
   function handleFinalize(e: CustomEvent<DndEvent<ManualComponent>>) {
     updateComponents(e.detail.items, id);
     dragDisabled = true;
+    stepsStore.componentDragging = false;
   }
 </script>
 
-<TransitionContainer let:onDelete>
+<TransitionContainer>
   <div
     class="manual__step-container"
     class:expanded={isOpen}
@@ -55,9 +74,17 @@
         <button on:click={() => toggleOpen(id)}>
           <Chevron {isOpen} size={25} />
         </button>
-        <ManualStepOptions />
-        <!-- <button on:click={() => moveStepUp(id)}>Up</button>
-        <button on:click={() => moveStepDown(id)}>Down</button> -->
+        <ManualStepOptions
+          options={[
+            ...stepOptions,
+            {
+              icon: "mdi:delete-outline",
+              onClick: () => deleteStep(id),
+              text: "Delete",
+              color: "var(--clr-red-400)",
+            },
+          ]}
+        />
       </div>
     </div>
     <div class="manual__step-line" />

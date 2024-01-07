@@ -4,6 +4,7 @@
   import { stepsStore } from "./steps-store.svelte";
   import { getComponentName } from "../../utils/manual-utils.ts";
   import TransitionContainer from "./transition-container.svelte";
+  import IconButton from "../controls/icon-button.svelte";
 
   type IProps = {
     setDisabled: (value: boolean) => void;
@@ -12,16 +13,12 @@
 
   const { component, setDisabled } = $props<IProps>();
   let { id, type, content } = component;
-  let { setComponentAsAnimated, deleteComponent } = stepsStore;
+  let { deleteComponent } = stepsStore;
 
   const componentName = getComponentName(type);
 </script>
 
-<TransitionContainer
-  let:onDelete
-  setAnimated={() => setComponentAsAnimated(id)}
-  isAnimated={!component.isAnimatedOnAdd}
->
+<TransitionContainer>
   <div class="manual__component-container">
     <button
       class="manual__component-drag-handle"
@@ -35,12 +32,12 @@
       <h4>{componentName} #{component.index}</h4>
       {content}
     </div>
-    <button
-      class="manual__component-delete"
-      on:click={() => onDelete(() => deleteComponent(id))}
-    >
-      <Icon icon="tdesign:delete" width="25" />
-    </button>
+    <IconButton
+      icon="mdi:delete-outline"
+      colorHover="var(--clr-red-400)"
+      color="var(--clr-neutral-200)"
+      onClick={() => deleteComponent(id)}
+    />
   </div>
 </TransitionContainer>
 

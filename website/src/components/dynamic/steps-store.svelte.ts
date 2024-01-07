@@ -2,10 +2,25 @@ import type { ManualComponent, ManualStep } from "../../global/types";
 
 //@ts-ignore
 let steps = $state<ManualStep[]>([]);
+let componentDragging = $state(false);
 
 export const stepsStore = {
   get steps() {
     return steps;
+  },
+  get componentDragging() {
+    return componentDragging;
+  },
+  set componentDragging(value: boolean) {
+    if (componentDragging) {
+      setTimeout(() => {
+        componentDragging = value;
+      }, 50);
+
+      return;
+    }
+
+    componentDragging = value;
   },
   addNewStep: () => {
     steps.push({
@@ -15,6 +30,7 @@ export const stepsStore = {
       title: "Random title",
       stepState: "done",
       isOpen: true,
+      icon: "mdi:pencil-outline",
     });
     steps = steps;
   },
@@ -26,10 +42,6 @@ export const stepsStore = {
     let step = findStep(id);
     step.components = newComp;
     updateComponentIndex();
-  },
-  setComponentAsAnimated: (id: string) => {
-    let component = findComponent(id);
-    component.isAnimatedOnAdd = true;
   },
   deleteComponent: (id: string) => {
     steps.map((x) => (x.components = x.components.filter((x) => x.id !== id)));
@@ -80,6 +92,7 @@ function updateComponentIndex() {
 
 function updateStepIndex() {
   steps.forEach((step, index) => (step.index = index + 1));
+  updateComponentIndex();
 }
 
 function moveStep(step: ManualStep, direction: "up" | "down") {

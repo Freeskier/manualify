@@ -1,3 +1,5 @@
+import { ComponentType, SvelteComponent } from "svelte";
+
 export type ManualComponentOption =
   | "text"
   | "checkbox"
@@ -14,14 +16,27 @@ export type ManualComponent = {
   index: number;
   type: ManualComponentOption;
   content: string;
-  isAnimatedOnAdd: boolean;
 };
 
 export type ManualStep = {
   id: string;
   index: number;
   title: string;
+  icon: string;
   components: ManualComponent[];
   stepState: ManualStepState;
   isOpen: boolean;
+};
+
+export type ManualStepOption = {
+  onClick: () => void;
+  icon: string | ComponentType<SvelteComponent>;
+  text: string;
+  color?: string;
+};
+
+export type ManualTag = {
+  id: string;
+  text: string;
+  color: string;
 };

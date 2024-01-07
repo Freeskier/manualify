@@ -1,62 +1,63 @@
 <script lang="ts">
-  import type { HTMLAttributes } from "svelte/elements";
+  import { sineInOut } from "svelte/easing";
+  import { stepsStore } from "./steps-store.svelte";
 
-  type IProps = {
-    animationStart?: number;
-    setAnimated?: () => void;
-    isAnimated?: boolean;
-  } & HTMLAttributes<HTMLDivElement>;
+  let animated = $state(false);
 
-  const {
-    animationStart = 0,
-    setAnimated,
-    isAnimated = true,
-    ...props
-  } = $props<IProps>();
-  let isDeleting = $state(false);
-  let wrapper = $state<HTMLDivElement>();
+  $effect(() => {
+    setTimeout(() => {
+      animated = true;
+    }, 300);
+  });
 
-  function onDelete(callback: () => void) {
-    wrapper?.addEventListener("animationend", callback);
-    isDeleting = true;
-    wrapper
-      ?.querySelector(".transition-container")
-      ?.classList.remove("created");
+  function enter(node: HTMLElement, { duration }: { duration: number }) {
+    if (stepsStore.componentDragging) return { duration: 0 };
+    return {
+      duration,
+      css: (t: number) => {
+        const eased = sineInOut(t);
+
+        return `
+          opacity: ${eased};
+          grid-template-rows: ${eased}fr;
+        `;
+      },
+    };
   }
 
-  function onAnimationEnd() {
-    if (setAnimated) setAnimated();
+  function leave(node: HTMLElement, { duration }: { duration: number }) {
+    if (stepsStore.componentDragging) return { duration: 0 };
 
-    wrapper?.querySelector(".transition-container")?.classList.add("created");
+    let container = node.querySelector(".transition-container");
+    container?.classList.remove("created");
+    animated = false;
+
+    return {
+      duration,
+      css: (t: number) => {
+        const eased = sineInOut(t);
+        return `
+          grid-template-rows: ${eased}fr;
+          opacity: ${eased};
+        `;
+      },
+    };
   }
 </script>
 
 <div
-  {...props}
-  bind:this={wrapper}
   class="transition-container__wrapper"
-  style={`--anim-start: ${animationStart}fr`}
-  class:create={isAnimated}
-  class:delete={isDeleting}
-  on:animationend={onAnimationEnd}
+  in:enter={{ duration: 300 }}
+  out:leave={{ duration: 300 }}
 >
-  <div class="transition-container">
-    <slot {onDelete} />
+  <div class="transition-container" class:created={animated}>
+    <slot />
   </div>
 </div>
 
 <style>
   .transition-container__wrapper {
     display: grid;
-    grid-template-rows: 1fr;
-  }
-
-  .transition-container__wrapper.create {
-    animation: onCreate 300ms ease-out forwards;
-  }
-
-  .transition-container__wrapper.delete {
-    animation: onDelete 300ms ease-out forwards;
   }
 
   .transition-container {
@@ -65,26 +66,5 @@
 
   .transition-container.created {
     overflow: visible;
-  }
-
-  @keyframes onCreate {
-    from {
-      grid-template-rows: var(--anim-start, 0fr);
-    }
-
-    to {
-      grid-template-rows: 1fr;
-    }
-  }
-
-  @keyframes onDelete {
-    from {
-      grid-template-rows: 1fr;
-    }
-
-    to {
-      grid-template-rows: 0fr;
-      opacity: 0;
-    }
   }
 </style>
