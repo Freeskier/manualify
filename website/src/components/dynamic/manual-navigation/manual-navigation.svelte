@@ -7,8 +7,10 @@
     getStepAccentColor,
   } from "../../../utils/manual-utils";
   import { stepsStore } from "../steps-store.svelte";
+  import { eventsStore } from "../events-store.svelte";
   import TransitionContainer from "../transition-container.svelte";
   import { flip } from "svelte/animate";
+  import type { ManualComponent } from '../../../global/types.ts'
 
 </script>
 
@@ -22,7 +24,7 @@
       <TransitionContainer>
         <button
           class="manual-navigation__item-content"
-          on:click={() => stepsStore.exampleFunc ? stepsStore.exampleFunc(step.id) : {}}
+          on:click={() => stepsStore.toggleOpen(step.id)}
         >
           <Icon
             icon={step.icon}
@@ -40,12 +42,15 @@
             {#each step.components as component (component.id)}
               <li animate:flip={{ duration: 300 }}>
                 <TransitionContainer>
-                  <div class="manual-navigation__component-item">
+                  <button 
+                    on:pointerdown={(e) => e.preventDefault()}
+                    on:click={(e) => eventsStore.rise('component-mention', "hi")}
+                    class="manual-navigation__component-item">
                     <span
                       >{getComponentName(component.type)} #{component.index}</span
                     >
                     <Icon icon={getComponentIcon(component.type)} width={24} />
-                  </div>
+                  </button>
                 </TransitionContainer>
               </li>
             {/each}
@@ -101,6 +106,7 @@
   }
 
   .manual-navigation__component-item {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;

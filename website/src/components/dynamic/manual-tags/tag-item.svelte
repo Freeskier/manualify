@@ -30,7 +30,6 @@
 
 <style>
   .tag-item__container {
-    position: relative;
     display: flex;
     align-items: center;
     gap: 0.25rem;
@@ -38,22 +37,16 @@
     border-color: var(--clr-tag);
     padding: 0.25rem 0.25rem;
     color: var(--clr-tag);
+    background-color: color-mix(in srgb, var(--clr-tag) 20%, transparent);
     max-width: 50rem;
     isolation: isolate;
-  }
-
-  .tag-item__container::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: var(--clr-tag);
-    opacity: 0.2;
-    z-index: -1;
+    box-shadow: 0 0 6px 2px color-mix(in srgb, var(--clr-tag) 20%, transparent)
   }
 
   .tag-item__container span {
     font-weight: 500;
     font-size: 1rem;
+    padding-inline: 1rem;
   }
 
   .tag-item__container button {

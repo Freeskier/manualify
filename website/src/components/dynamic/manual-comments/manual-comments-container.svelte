@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { stepsStore } from "../steps-store.svelte.ts";
+  import { eventsStore } from "../events-store.svelte.ts";
 
   type IProps = {
     onExpand: () => void;
@@ -8,12 +8,24 @@
   const { onExpand } = $props<IProps>();
   let str = $state<string[]>([])
 
-  stepsStore.exampleFunc = (s) => {
-    str.push(s)
+  eventsStore.subscribe = {
+    type: 'component-mention', 
+    callback: (message) => {
+      str.push(message)
+    }
   }
+  // function name(e) {
+  //   e.preventDefault()
+  //   console.log('hi')
+  // }
 </script>
 
 <button on:click={onExpand}>Expand</button>
-{#each str as s}
-  <h3>{s}</h3>
-{/each}
+ 
+<button on:pointerdown|preventDefault on:click|preventDefault >prevent</button>
+
+<style>
+  div:focus, div:focus-within {
+    outline: 1px solid var(--clr-red-400);
+  }
+</style>

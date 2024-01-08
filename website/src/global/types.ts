@@ -40,3 +40,8 @@ export type ManualTag = {
   text: string;
   color: string;
 };
+
+export type ManualEvent = {
+  type: string;
+  callback: (message: any) => void;
+};

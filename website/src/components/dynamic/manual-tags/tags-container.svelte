@@ -1,5 +1,6 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
+  import { fade } from 'svelte/transition'
   import { tagsStore } from "../tags-store.svelte.ts";
   import TagItem from "./tag-item.svelte";
 
@@ -35,11 +36,10 @@ let inputValue = $state('')
 <div class="tags__container">
   <ul class="tags__list">
     {#each tagsStore.tags as tag (tag.id)}
-      <li animate:flip>
+      <li animate:flip={{duration: 200}} in:fade>
         <TagItem {tag} deletable/>
       </li>
     {/each}
-
       <input
       class="tags__input"
       placeholder="Add tag here"

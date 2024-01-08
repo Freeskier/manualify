@@ -3,7 +3,6 @@ import type { ManualComponent, ManualStep } from "../../global/types";
 //@ts-ignore
 let steps = $state<ManualStep[]>([]);
 let componentDragging = $state(false);
-let exampleFunc = $state<(str: string) => void>();
 
 export const stepsStore = {
   get steps() {
@@ -12,8 +11,6 @@ export const stepsStore = {
   get componentDragging() {
     return componentDragging;
   },
-  get exampleFunc() { return exampleFunc },
-  set exampleFunc(v) { exampleFunc = v },
   set componentDragging(value: boolean) {
     if (componentDragging) {
       setTimeout(() => {
@@ -22,7 +19,6 @@ export const stepsStore = {
 
       return;
     }
-
     componentDragging = value;
   },
   addNewStep: () => {
