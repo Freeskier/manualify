@@ -44,6 +44,7 @@
     grid-template-columns: 20rem 1fr 30rem;
   }
 
+  .manual__comments,
   .manual__navigation {
     position: sticky;
     top: 0;
@@ -51,11 +52,15 @@
     height: 100%;
     max-height: 100svh;
     background-color: var(--clr-neutral-200);
+  }
+
+  .manual__navigation {
+
     border-right: 2px solid var(--clr-neutral-400);
   }
 
   .manual__comments {
-    background-color: var(--clr-neutral-200);
+
     border-left: 2px solid var(--clr-neutral-400);
   }
   .manual__content {

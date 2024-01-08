@@ -9,6 +9,7 @@
   import { stepsStore } from "../steps-store.svelte";
   import TransitionContainer from "../transition-container.svelte";
   import { flip } from "svelte/animate";
+
 </script>
 
 <ul class="manual-navigation__list">
@@ -21,7 +22,7 @@
       <TransitionContainer>
         <button
           class="manual-navigation__item-content"
-          on:click={() => stepsStore.toggleOpen(step.id)}
+          on:click={() => stepsStore.exampleFunc ? stepsStore.exampleFunc(step.id) : {}}
         >
           <Icon
             icon={step.icon}
@@ -81,12 +82,13 @@
 
   .manual-navigation__components-wrapper.expand
     .manual-navigation__components-list {
-    margin: 1rem 1rem;
+    margin-block: 1rem;
   }
 
   .manual-navigation__components-list {
     overflow: hidden;
-    margin: 0rem 1rem;
+    margin-block: 0rem;
+    margin-inline: 1.75rem 1rem;
     border-left: 2px solid var(--clr-accent);
     padding-left: 1rem;
     display: grid;
