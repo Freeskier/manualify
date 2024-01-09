@@ -10,8 +10,8 @@
   import { eventsStore } from "../events-store.svelte";
   import TransitionContainer from "../transition-container.svelte";
   import { flip } from "svelte/animate";
-  import type { ManualComponent } from '../../../global/types.ts'
-
+  import type { ManualComponent } from "../../../global/types.ts";
+  import { fade } from "svelte/transition";
 </script>
 
 <ul class="manual-navigation__list">
@@ -42,10 +42,12 @@
             {#each step.components as component (component.id)}
               <li animate:flip={{ duration: 300 }}>
                 <TransitionContainer>
-                  <button 
+                  <button
                     on:pointerdown={(e) => e.preventDefault()}
-                    on:click={(e) => eventsStore.rise('component-mention', "hi")}
-                    class="manual-navigation__component-item">
+                    on:click={(e) =>
+                      eventsStore.rise("component-mention", "hi")}
+                    class="manual-navigation__component-item"
+                  >
                     <span
                       >{getComponentName(component.type)} #{component.index}</span
                     >
@@ -54,6 +56,15 @@
                 </TransitionContainer>
               </li>
             {/each}
+            {#if step.components.length === 0}
+              <li
+                in:fade={{ duration: 200 }}
+                out:fade={{ duration: 200 }}
+                class="manual-navigation__components-empty"
+              >
+                List of components is empty.
+              </li>
+            {/if}
           </ul>
         </div>
       </TransitionContainer>
@@ -91,18 +102,28 @@
   }
 
   .manual-navigation__components-list {
+    position: relative;
     overflow: hidden;
     margin-block: 0rem;
     margin-inline: 1.75rem 1rem;
     border-left: 2px solid var(--clr-accent);
     padding-left: 1rem;
     display: grid;
-    gap: 0.75rem;
     transition: margin 300ms ease-in-out;
   }
 
   .manual-navigation__item-content span {
     justify-self: start;
+  }
+
+  .manual-navigation__components-list:has(
+      .manual-navigation__components-empty
+    ) {
+    border-color: transparent;
+  }
+
+  .manual-navigation__components-empty {
+    color: var(--clr-neutral-400);
   }
 
   .manual-navigation__component-item {
@@ -115,6 +136,7 @@
     font-size: 0.875rem;
     letter-spacing: 1px;
     font-weight: 600;
+    padding-block: 0.25rem;
   }
 
   :global(.manual-navigation__item-icon) {

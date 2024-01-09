@@ -10,8 +10,6 @@
 
   const { options } = $props<IProps>();
   let isOpen = $state(false);
-
-  $inspect(isOpen);
 </script>
 
 <div class="options__container" class:open={isOpen}>
@@ -26,9 +24,9 @@
       {#each options as option}
         <li>
           <button
-            on:click={() => {
-              option.onClick();
+            onclick={() => {
               isOpen = false;
+              option.onClick();
             }}
             class="options__item"
             style={`${
@@ -70,7 +68,6 @@
 
   .options__container.open {
     z-index: 10;
-    background-color: aqua;
   }
 
   .options__container.open .options__list-wrapper {

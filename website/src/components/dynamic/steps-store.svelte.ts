@@ -12,10 +12,6 @@ export const stepsStore = {
     return canAnimateComponent;
   },
   set canAnimateComponent(value: boolean) {
-    // if (!canAnimateComponent) {
-    //   setTimeout(() => (canAnimateComponent = true), 50);
-    //   return;
-    // }
     canAnimateComponent = value;
   },
   addNewStep: () => {

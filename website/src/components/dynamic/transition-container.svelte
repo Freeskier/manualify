@@ -31,6 +31,7 @@
 
     let container = node.querySelector(".transition-container");
     container?.classList.remove("created");
+
     animated = false;
 
     return {
