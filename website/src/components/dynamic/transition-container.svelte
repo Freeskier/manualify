@@ -11,7 +11,8 @@
   });
 
   function enter(node: HTMLElement, { duration }: { duration: number }) {
-    if (stepsStore.componentDragging) return { duration: 0 };
+    if (!stepsStore.canAnimateComponent) return { duration: 0 };
+
     return {
       duration,
       css: (t: number) => {
@@ -26,7 +27,7 @@
   }
 
   function leave(node: HTMLElement, { duration }: { duration: number }) {
-    if (stepsStore.componentDragging) return { duration: 0 };
+    if (!stepsStore.canAnimateComponent) return { duration: 0 };
 
     let container = node.querySelector(".transition-container");
     container?.classList.remove("created");

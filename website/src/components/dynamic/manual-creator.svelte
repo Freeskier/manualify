@@ -18,7 +18,7 @@
     <div class="manual__content-steps">
       {#each stepsStore.steps as step (step.id)}
         <div animate:flip={{ duration: 500 }}>
-          <ManualStep {...step} />
+          <ManualStep {...step} bind:step />
         </div>
       {/each}
       <button on:click={stepsStore.addNewStep}>Add Step</button>
@@ -55,12 +55,10 @@
   }
 
   .manual__navigation {
-
     border-right: 2px solid var(--clr-neutral-400);
   }
 
   .manual__comments {
-
     border-left: 2px solid var(--clr-neutral-400);
   }
   .manual__content {

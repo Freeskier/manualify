@@ -10,6 +10,8 @@
 
   const { options } = $props<IProps>();
   let isOpen = $state(false);
+
+  $inspect(isOpen);
 </script>
 
 <div class="options__container" class:open={isOpen}>
@@ -68,6 +70,7 @@
 
   .options__container.open {
     z-index: 10;
+    background-color: aqua;
   }
 
   .options__container.open .options__list-wrapper {

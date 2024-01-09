@@ -24,13 +24,14 @@
       class="manual__component-drag-handle"
       on:pointerdown={(e) => {
         setDisabled(false);
+        stepsStore.canAnimateComponent = false;
       }}
     >
       <Icon icon="mdi:drag-vertical" width="40" />
     </button>
     <div class="manual__component-content">
       <h4>{componentName} #{component.index}</h4>
-      {content}
+      <div>{content}</div>
     </div>
     <IconButton
       icon="mdi:delete-outline"

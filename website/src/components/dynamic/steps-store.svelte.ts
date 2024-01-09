@@ -2,24 +2,21 @@ import type { ManualComponent, ManualStep } from "../../global/types";
 
 //@ts-ignore
 let steps = $state<ManualStep[]>([]);
-let componentDragging = $state(false);
+let canAnimateComponent = $state<boolean>(true);
 
 export const stepsStore = {
   get steps() {
     return steps;
   },
-  get componentDragging() {
-    return componentDragging;
+  get canAnimateComponent() {
+    return canAnimateComponent;
   },
-  set componentDragging(value: boolean) {
-    if (componentDragging) {
-      setTimeout(() => {
-        componentDragging = value;
-      }, 50);
-
-      return;
-    }
-    componentDragging = value;
+  set canAnimateComponent(value: boolean) {
+    // if (!canAnimateComponent) {
+    //   setTimeout(() => (canAnimateComponent = true), 50);
+    //   return;
+    // }
+    canAnimateComponent = value;
   },
   addNewStep: () => {
     steps.push({

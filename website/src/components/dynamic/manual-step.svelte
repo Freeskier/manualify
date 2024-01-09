@@ -8,6 +8,7 @@
     ManualComponent,
     ManualStepOption,
     ManualStepState,
+    ManualStep,
   } from "../../global/types";
   import ManualStepComponent from "./manual-step-component.svelte";
   import { stepsStore } from "./steps-store.svelte";
@@ -21,9 +22,11 @@
     stepState: ManualStepState;
     isOpen: boolean;
     components: ManualComponent[];
+    step: ManualStep;
   };
 
-  const { index, title, stepState, id, isOpen, components } = $props<IProps>();
+  const { index, title, stepState, id, isOpen, components, step } =
+    $props<IProps>();
 
   let { updateComponents, toggleOpen, deleteStep, moveStepDown, moveStepUp } =
     stepsStore;
@@ -45,15 +48,19 @@
   ];
 
   function handleConsider(e: CustomEvent<DndEvent<ManualComponent>>) {
+    if (components.length !== e.detail.items.length) {
+      stepsStore.canAnimateComponent = true;
+    }
     updateComponents(e.detail.items, id);
     dragDisabled = true;
-    stepsStore.componentDragging = true;
   }
 
   function handleFinalize(e: CustomEvent<DndEvent<ManualComponent>>) {
     updateComponents(e.detail.items, id);
     dragDisabled = true;
-    stepsStore.componentDragging = false;
+    stepsStore.canAnimateComponent = false;
+
+    setTimeout(() => (stepsStore.canAnimateComponent = true), 50);
   }
 </script>
 
@@ -68,7 +75,7 @@
     <div class="manual__step-heading">
       <div class="manual__step-heading-title">
         <h2 class="manual__step-ordinal_number">#{index}</h2>
-        <h2>{title}</h2>
+        <h2 contenteditable="true" bind:innerText={step.title}>{title}</h2>
       </div>
       <div class="manual__step-heading_options">
         <button on:click={() => toggleOpen(id)}>
@@ -104,7 +111,7 @@
         {#each components as component (component.id)}
           <div animate:flip={{ duration: FLIP_DURATION }}>
             <ManualStepComponent
-              {component}
+              bind:component
               setDisabled={(value) => (dragDisabled = value)}
             />
           </div>

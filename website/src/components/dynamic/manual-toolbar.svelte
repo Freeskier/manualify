@@ -31,7 +31,6 @@
           content: component,
           index: component.length + 1,
           type: component,
-          isAnimatedOnAdd: false,
         },
       ],
       stepId
