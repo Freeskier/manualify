@@ -12,6 +12,7 @@
   import { flip } from "svelte/animate";
   import type { ManualComponent } from "../../../global/types.ts";
   import { fade } from "svelte/transition";
+  import { DND_DURATION } from "../../../global/constans.ts";
 </script>
 
 <ul class="manual-navigation__list">
@@ -25,9 +26,9 @@
         <button
           class="manual-navigation__item-content"
           on:click={() => {
-            eventsStore.raise('test1', "hi")
-            stepsStore.toggleOpen(step.id)
-            }}
+            eventsStore.raise("test1", "hi");
+            stepsStore.toggleOpen(step.id);
+          }}
         >
           <Icon
             icon={step.icon}
@@ -41,36 +42,43 @@
           class="manual-navigation__components-wrapper"
           class:expand={step.isOpen}
         >
-        <div class="manual-navigation__components-list">
-          <ul >
-            {#each step.components as component (component.id)}
-              <li animate:flip={{ duration: 300 }}>
-                <TransitionContainer>
-                  <button
-                    on:pointerdown={(e) => e.preventDefault()}
-                    class="manual-navigation__component-item"
-                  >
-                    <span
-                      >{getComponentName(component.type)} #{component.index}</span
+          <div class="manual-navigation__components-list">
+            <ul>
+              {#each step.components as component (component.id)}
+                <li
+                  animate:flip={{
+                    duration: stepsStore.grabbed ? 0 : DND_DURATION,
+                  }}
+                >
+                  <TransitionContainer>
+                    <button
+                      on:pointerdown={(e) => e.preventDefault()}
+                      class="manual-navigation__component-item"
                     >
-                    <Icon icon={getComponentIcon(component.type)} width={24} />
-                  </button>
-                </TransitionContainer>
-              </li>
-            {/each}
-
-          </ul>
-          {#if step.components.length === 0}
-          <TransitionContainer>
-            <span
-              in:fade={{ duration: 200 }}
-              out:fade={{ duration: 200 }}
-              class="manual-navigation__components-empty">                
-              List of components is empty.                
-            </span>
-          </TransitionContainer>
-          {/if}
-        </div>
+                      <span
+                        >{getComponentName(component.type)} #{component.index}</span
+                      >
+                      <Icon
+                        icon={getComponentIcon(component.type)}
+                        width={24}
+                      />
+                    </button>
+                  </TransitionContainer>
+                </li>
+              {/each}
+            </ul>
+            {#if step.components.length === 0}
+              <TransitionContainer>
+                <span
+                  in:fade={{ duration: 200 }}
+                  out:fade={{ duration: 200 }}
+                  class="manual-navigation__components-empty"
+                >
+                  List of components is empty.
+                </span>
+              </TransitionContainer>
+            {/if}
+          </div>
         </div>
       </TransitionContainer>
     </li>
@@ -110,7 +118,9 @@
     position: relative;
     overflow: hidden;
     display: grid;
-    transition: margin 300ms ease-in-out, border-color 100ms ease-in-out;
+    transition:
+      margin 300ms ease-in-out,
+      border-color 100ms ease-in-out;
   }
 
   .manual-navigation__components-list ul {
@@ -124,7 +134,9 @@
     justify-self: start;
   }
 
-  .manual-navigation__components-list:has(.manual-navigation__components-empty) {
+  .manual-navigation__components-list:has(
+      .manual-navigation__components-empty
+    ) {
     border-color: transparent;
   }
 

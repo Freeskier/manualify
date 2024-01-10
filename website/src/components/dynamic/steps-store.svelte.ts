@@ -3,10 +3,17 @@ import type { ManualComponent, ManualStep } from "../../global/types";
 //@ts-ignore
 let steps = $state<ManualStep[]>([]);
 let canAnimateComponent = $state<boolean>(true);
+let grabbed = $state<boolean>(true);
 
 export const stepsStore = {
   get steps() {
     return steps;
+  },
+  get grabbed() {
+    return grabbed;
+  },
+  set grabbed(value: boolean) {
+    grabbed = value;
   },
   get canAnimateComponent() {
     return canAnimateComponent;

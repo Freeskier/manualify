@@ -1,7 +1,11 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import Chevron from "../../assets/icons/chevron.svelte";
-  import { dndzone, type DndEvent, SHADOW_ITEM_MARKER_PROPERTY_NAME } from "svelte-dnd-action";
+  import {
+    dndzone,
+    type DndEvent,
+    SHADOW_ITEM_MARKER_PROPERTY_NAME,
+  } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import ManualToolbar from "./manual-toolbar.svelte";
   import type {
@@ -51,9 +55,11 @@
   function handleConsider(e: CustomEvent<DndEvent<ManualComponent>>) {
     if (components.length !== e.detail.items.length) {
       stepsStore.canAnimateComponent = true;
-      grabbedFromHere = true
+      grabbedFromHere = true;
+      stepsStore.grabbed = true;
     } else {
-      grabbedFromHere = false
+      grabbedFromHere = false;
+      stepsStore.grabbed = false;
     }
     updateComponents(e.detail.items, id);
     dragDisabled = true;
@@ -66,7 +72,6 @@
 
     setTimeout(() => (stepsStore.canAnimateComponent = true), 50);
   }
-
 </script>
 
 <TransitionContainer>
@@ -114,14 +119,14 @@
         on:finalize={handleFinalize}
       >
         {#each components as component (component.id)}
-          <div style="position: relative;" animate:flip={{ duration: grabbedFromHere? 0 : DND_DURATION }}>
+          <div
+            style="position: relative;"
+            animate:flip={{ duration: grabbedFromHere ? 0 : DND_DURATION }}
+          >
             <ManualStepComponent
               bind:component
               setDisabled={(value) => (dragDisabled = value)}
             />
-            {#if component[SHADOW_ITEM_MARKER_PROPERTY_NAME as keyof typeof component]}
-              <div class="test"></div>
-            {/if}
           </div>
         {/each}
         <ManualToolbar stepId={id} {components} />
@@ -131,12 +136,6 @@
 </TransitionContainer>
 
 <style>
-  .test {
-    position: absolute;
-    inset: 0;
-    background-color: rgba(127, 255, 212, 0.226);
-    visibility: visible;
-  }
   .manual__step-container {
     --move-in-duration: 300ms;
     --spacing-bottom: 3rem;

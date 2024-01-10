@@ -9,12 +9,12 @@
 
   let expandCommentSection = $state(false);
 
-  $inspect(stepsStore.steps)
+  $inspect(stepsStore.steps);
 </script>
 
 <div class="manual__container" class:expand-comments={expandCommentSection}>
   <nav class="manual__navigation">
-    <!-- <ManualNavigation /> -->
+    <ManualNavigation />
   </nav>
   <div class="manual__content">
     <TagsContainer />

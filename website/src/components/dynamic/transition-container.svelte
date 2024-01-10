@@ -60,9 +60,7 @@
 
 <style>
   .transition-container__wrapper {
-    position: relative;
     display: grid;
-    background-color: rgba(255, 127, 80, 0.267);
   }
 
   .transition-container {
