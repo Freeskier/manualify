@@ -31,7 +31,7 @@
     </button>
     <div class="manual__component-content">
       <h4>{componentName} #{component.index}</h4>
-      <div>{content}</div>
+      <div>{id}</div>
     </div>
     <IconButton
       icon="mdi:delete-outline"

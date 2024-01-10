@@ -1,19 +1,18 @@
 <script lang="ts">
   import { sineInOut } from "svelte/easing";
   import { stepsStore } from "./steps-store.svelte";
-  import type { SvelteNode } from "svelte/compiler";
-
+  import { DND_DURATION } from "../../global/constans";
 
   let animated = $state(false);
 
   $effect(() => {
     setTimeout(() => {
       animated = true;
-    }, 300);
+    }, DND_DURATION);
   });
 
   function enter(node: HTMLElement, { duration }: { duration: number }) {
-    if (!stepsStore.canAnimateComponent ) return { duration: 0 };
+    if (!stepsStore.canAnimateComponent) return { duration: 0 };
 
     return {
       duration,
@@ -51,8 +50,8 @@
 
 <div
   class="transition-container__wrapper"
-  in:enter={{ duration: 300 }}
-  out:leave={{ duration: 300 }}
+  in:enter={{ duration: DND_DURATION }}
+  out:leave={{ duration: DND_DURATION }}
 >
   <div class="transition-container" class:created={animated}>
     <slot />
@@ -61,7 +60,9 @@
 
 <style>
   .transition-container__wrapper {
+    position: relative;
     display: grid;
+    background-color: rgba(255, 127, 80, 0.267);
   }
 
   .transition-container {

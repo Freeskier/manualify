@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import Chevron from "../../assets/icons/chevron.svelte";
-  import { dndzone, type DndEvent } from "svelte-dnd-action";
+  import { dndzone, type DndEvent, SHADOW_ITEM_MARKER_PROPERTY_NAME } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import ManualToolbar from "./manual-toolbar.svelte";
   import type {
@@ -14,6 +14,7 @@
   import { stepsStore } from "./steps-store.svelte";
   import TransitionContainer from "./transition-container.svelte";
   import ManualStepOptions from "./manual-step-options.svelte";
+  import { DND_DURATION } from "../../global/constans";
 
   type IProps = {
     id: string;
@@ -32,7 +33,7 @@
     stepsStore;
 
   let dragDisabled = $state(true);
-  const FLIP_DURATION = 300;
+  let grabbedFromHere = $state(false);
 
   const stepOptions: ManualStepOption[] = [
     {
@@ -50,6 +51,9 @@
   function handleConsider(e: CustomEvent<DndEvent<ManualComponent>>) {
     if (components.length !== e.detail.items.length) {
       stepsStore.canAnimateComponent = true;
+      grabbedFromHere = true
+    } else {
+      grabbedFromHere = false
     }
     updateComponents(e.detail.items, id);
     dragDisabled = true;
@@ -62,6 +66,7 @@
 
     setTimeout(() => (stepsStore.canAnimateComponent = true), 50);
   }
+
 </script>
 
 <TransitionContainer>
@@ -100,7 +105,7 @@
         class="manual__step-content"
         use:dndzone={{
           items: components,
-          flipDurationMs: FLIP_DURATION,
+          flipDurationMs: DND_DURATION,
           dragDisabled,
           dropFromOthersDisabled: !isOpen,
           dropTargetClasses: ["drop-target"],
@@ -109,11 +114,14 @@
         on:finalize={handleFinalize}
       >
         {#each components as component (component.id)}
-          <div animate:flip={{ duration: FLIP_DURATION }}>
+          <div style="position: relative;" animate:flip={{ duration: grabbedFromHere? 0 : DND_DURATION }}>
             <ManualStepComponent
               bind:component
               setDisabled={(value) => (dragDisabled = value)}
             />
+            {#if component[SHADOW_ITEM_MARKER_PROPERTY_NAME as keyof typeof component]}
+              <div class="test"></div>
+            {/if}
           </div>
         {/each}
         <ManualToolbar stepId={id} {components} />
@@ -123,6 +131,12 @@
 </TransitionContainer>
 
 <style>
+  .test {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(127, 255, 212, 0.226);
+    visibility: visible;
+  }
   .manual__step-container {
     --move-in-duration: 300ms;
     --spacing-bottom: 3rem;
@@ -256,6 +270,7 @@
     flex-direction: column;
     outline: none !important;
     min-height: 0 !important;
+    padding-top: 1rem;
   }
 
   .manual__step-content_wrapper::before {
