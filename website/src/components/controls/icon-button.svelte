@@ -9,29 +9,33 @@
     colorHover?: string;
     size?: number;
     isOpen?: boolean;
-    onClick: () => void;
+    onclick?: () => void;
   } & HTMLAttributes<HTMLButtonElement>;
 
-  const {
+  let {
     icon,
     color = "var(--clr-neutral-500)",
     colorHover = "var(--clr-neutral-500)",
     size = 30,
-    isOpen = false,
-    onClick,
-    ...props
+    isOpen,
+    onclick
   } = $props<IProps>();
+
+  function onButtonClick() {
+    if(onclick) onclick()
+
+    isOpen = !isOpen
+  }
 </script>
 
 <button
-  on:click={onClick}
+  onclick={onButtonClick}
   style={`--clr-btn: ${color}; --clr-btn-hover: ${colorHover};`}
-  {...props}
 >
   {#if typeof icon === "string"}
     <Icon {icon} width={size} height={size} />
   {:else}
-    <svelte:component this={icon} {isOpen} />
+    <svelte:component this={icon} isOpen={isOpen ?? false} />
   {/if}
 </button>
 

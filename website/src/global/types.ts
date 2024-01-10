@@ -29,7 +29,7 @@ export type ManualStep = {
 };
 
 export type ManualStepOption = {
-  onClick: () => void;
+  onclick: () => void;
   icon: string | ComponentType<SvelteComponent>;
   text: string;
   color?: string;
@@ -41,7 +41,12 @@ export type ManualTag = {
   color: string;
 };
 
-export type ManualEvent = {
+export type ManualEvent<T> = {
   type: string;
-  callback: (message: any) => void;
+  callback: (payload: T) => void;
 };
+
+export type ManualEvents = {
+  test1: string
+  test2: number
+}

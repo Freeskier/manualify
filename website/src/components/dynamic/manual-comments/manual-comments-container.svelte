@@ -8,16 +8,10 @@
   const { onExpand } = $props<IProps>();
   let str = $state<string[]>([]);
 
-  eventsStore.subscribe = {
-    type: "component-mention",
-    callback: (message) => {
-      str.push(message);
-    },
-  };
-  // function name(e) {
-  //   e.preventDefault()
-  //   console.log('hi')
-  // }
+  eventsStore.subscribe('test1', e => {
+    console.log(e)
+  })
+
 </script>
 
 <button on:click={onExpand}>Expand</button>

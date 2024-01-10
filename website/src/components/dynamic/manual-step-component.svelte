@@ -37,7 +37,7 @@
       icon="mdi:delete-outline"
       colorHover="var(--clr-red-400)"
       color="var(--clr-neutral-200)"
-      onClick={() => deleteComponent(id)}
+      onclick={() => deleteComponent(id)}
     />
   </div>
 </TransitionContainer>

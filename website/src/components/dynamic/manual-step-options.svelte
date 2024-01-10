@@ -15,9 +15,8 @@
 <div class="options__container" class:open={isOpen}>
   <IconButton
     class="options__button"
-    onClick={() => (isOpen = !isOpen)}
     icon={OptionsAnimIcon}
-    {isOpen}
+    bind:isOpen
   />
   <div class="options__list-wrapper">
     <ul class="options__list">
@@ -26,7 +25,7 @@
           <button
             onclick={() => {
               isOpen = false;
-              option.onClick();
+              option.onclick();
             }}
             class="options__item"
             style={`${

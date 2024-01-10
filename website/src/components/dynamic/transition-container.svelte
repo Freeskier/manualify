@@ -1,6 +1,8 @@
 <script lang="ts">
   import { sineInOut } from "svelte/easing";
   import { stepsStore } from "./steps-store.svelte";
+  import type { SvelteNode } from "svelte/compiler";
+
 
   let animated = $state(false);
 
@@ -11,7 +13,7 @@
   });
 
   function enter(node: HTMLElement, { duration }: { duration: number }) {
-    if (!stepsStore.canAnimateComponent) return { duration: 0 };
+    if (!stepsStore.canAnimateComponent ) return { duration: 0 };
 
     return {
       duration,

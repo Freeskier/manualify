@@ -1,11 +1,16 @@
-import type { ManualEvent } from "../../global/types";
+import type { ManualEvents } from "../../global/types";
 
-let events = $state<ManualEvent[]>([]);
+type ManualEventType = keyof ManualEvents;
 
-export const eventsStore = {
-  set subscribe(value: ManualEvent) {
-    events.push(value);
-  },
-  rise: (type: string, message: any) =>
-    events.filter((x) => x.type === type).forEach((x) => x.callback(message)),
-};
+let listeners = $state<{[K in ManualEventType]?: Array<(event: ManualEvents[K]) => void>}>({});
+function subscribe<T extends ManualEventType>(eventType: T, listener: (event: ManualEvents[T]) => void): void {
+  listeners[eventType] = listeners[eventType] || [];
+  listeners[eventType]!.push(listener);
+}
+
+function raise<T extends ManualEventType>(eventType: T, event: ManualEvents[T]): void {
+  listeners[eventType]?.forEach(listener => listener(event));
+}
+
+export const eventsStore =  { subscribe, raise };
+

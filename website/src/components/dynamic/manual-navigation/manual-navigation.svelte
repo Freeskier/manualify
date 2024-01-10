@@ -24,7 +24,10 @@
       <TransitionContainer>
         <button
           class="manual-navigation__item-content"
-          on:click={() => stepsStore.toggleOpen(step.id)}
+          on:click={() => {
+            eventsStore.raise('test1', "hi")
+            stepsStore.toggleOpen(step.id)
+            }}
         >
           <Icon
             icon={step.icon}
@@ -38,14 +41,13 @@
           class="manual-navigation__components-wrapper"
           class:expand={step.isOpen}
         >
-          <ul class="manual-navigation__components-list">
+        <div class="manual-navigation__components-list">
+          <ul >
             {#each step.components as component (component.id)}
               <li animate:flip={{ duration: 300 }}>
                 <TransitionContainer>
                   <button
                     on:pointerdown={(e) => e.preventDefault()}
-                    on:click={(e) =>
-                      eventsStore.rise("component-mention", "hi")}
                     class="manual-navigation__component-item"
                   >
                     <span
@@ -56,16 +58,19 @@
                 </TransitionContainer>
               </li>
             {/each}
-            {#if step.components.length === 0}
-              <li
-                in:fade={{ duration: 200 }}
-                out:fade={{ duration: 200 }}
-                class="manual-navigation__components-empty"
-              >
-                List of components is empty.
-              </li>
-            {/if}
+
           </ul>
+          {#if step.components.length === 0}
+          <TransitionContainer>
+            <span
+              in:fade={{ duration: 200 }}
+              out:fade={{ duration: 200 }}
+              class="manual-navigation__components-empty">                
+              List of components is empty.                
+            </span>
+          </TransitionContainer>
+          {/if}
+        </div>
         </div>
       </TransitionContainer>
     </li>
@@ -104,26 +109,32 @@
   .manual-navigation__components-list {
     position: relative;
     overflow: hidden;
+    display: grid;
+    transition: margin 300ms ease-in-out, border-color 100ms ease-in-out;
+  }
+
+  .manual-navigation__components-list ul {
+    border-left: 2px solid var(--clr-accent);
     margin-block: 0rem;
     margin-inline: 1.75rem 1rem;
-    border-left: 2px solid var(--clr-accent);
     padding-left: 1rem;
-    display: grid;
-    transition: margin 300ms ease-in-out;
   }
 
   .manual-navigation__item-content span {
     justify-self: start;
   }
 
-  .manual-navigation__components-list:has(
-      .manual-navigation__components-empty
-    ) {
+  .manual-navigation__components-list:has(.manual-navigation__components-empty) {
     border-color: transparent;
   }
 
   .manual-navigation__components-empty {
     color: var(--clr-neutral-400);
+    padding-block: calc(0.5rem - 0.5px);
+    margin-inline: auto;
+    width: 100%;
+    display: block;
+    text-align: center;
   }
 
   .manual-navigation__component-item {
@@ -136,7 +147,7 @@
     font-size: 0.875rem;
     letter-spacing: 1px;
     font-weight: 600;
-    padding-block: 0.25rem;
+    padding-block: 0.5rem;
   }
 
   :global(.manual-navigation__item-icon) {

@@ -37,12 +37,12 @@
   const stepOptions: ManualStepOption[] = [
     {
       icon: "mdi:arrow-up",
-      onClick: () => moveStepUp(id),
+      onclick: () => moveStepUp(id),
       text: "Move step up",
     },
     {
       icon: "mdi:arrow-down",
-      onClick: () => moveStepDown(id),
+      onclick: () => moveStepDown(id),
       text: "Move step down",
     },
   ];
@@ -56,9 +56,9 @@
   }
 
   function handleFinalize(e: CustomEvent<DndEvent<ManualComponent>>) {
+    stepsStore.canAnimateComponent = false;
     updateComponents(e.detail.items, id);
     dragDisabled = true;
-    stepsStore.canAnimateComponent = false;
 
     setTimeout(() => (stepsStore.canAnimateComponent = true), 50);
   }
@@ -86,7 +86,7 @@
             ...stepOptions,
             {
               icon: "mdi:delete-outline",
-              onClick: () => deleteStep(id),
+              onclick: () => deleteStep(id),
               text: "Delete",
               color: "var(--clr-red-400)",
             },

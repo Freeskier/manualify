@@ -5,13 +5,16 @@
   import TagsContainer from "./manual-tags/tags-container.svelte";
   import ManualCommentsContainer from "./manual-comments/manual-comments-container.svelte";
   import ManualNavigation from "./manual-navigation/manual-navigation.svelte";
+  import { eventsStore } from "./events-store.svelte.ts";
 
   let expandCommentSection = $state(false);
+
+  $inspect(stepsStore.steps)
 </script>
 
 <div class="manual__container" class:expand-comments={expandCommentSection}>
   <nav class="manual__navigation">
-    <ManualNavigation />
+    <!-- <ManualNavigation /> -->
   </nav>
   <div class="manual__content">
     <TagsContainer />
