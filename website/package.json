@@ -16,7 +16,7 @@
     "@fontsource/ubuntu-mono": "^5.0.18",
     "astro": "^4.0.7",
     "astro-icon": "^0.8.2",
-    "svelte": "^5.0.0-next.31",
+    "svelte": "^5.0.0-next.33",
     "svelte-dnd-action": "^0.9.38",
     "typescript": "^5.3.3"
   },

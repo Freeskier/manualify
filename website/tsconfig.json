@@ -1,4 +1,12 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "include": ["./global.d.ts"]
+  "include": ["./global.d.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/dynamic/*"],
+      "@assets/*": ["src/assets/*"],
+      "@global/*": ["src/global/*"]
+    }
+  }
 }

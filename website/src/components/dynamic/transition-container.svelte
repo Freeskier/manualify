@@ -1,7 +1,7 @@
 <script lang="ts">
   import { sineInOut } from "svelte/easing";
   import { stepsStore } from "./steps-store.svelte";
-  import { DND_DURATION } from "../../global/constans";
+  import { DND_DURATION } from "@global/constans";
 
   let animated = $state(false);
 
