@@ -1,6 +1,6 @@
 ---
 import "@fontsource/ubuntu-mono";
-import "@fontsource/poppins";
+import "@fontsource-variable/montserrat";
 ---
 
 <html lang="en">
@@ -23,6 +23,7 @@ import "@fontsource/poppins";
       padding: 0;
       box-sizing: border-box;
       font-family: inherit;
+      min-width: 0;
     }
 
     html {
@@ -32,6 +33,7 @@ import "@fontsource/poppins";
     :root {
       --clr-bg: #2c2c2c;
       --clr-text: white;
+      --clr-text-dark: #b3b3b3;
       --clr-neutral-500: #909090;
       --clr-neutral-400: #494949;
       --clr-neutral-300: #232323;
@@ -42,7 +44,7 @@ import "@fontsource/poppins";
     }
     body {
       background-color: var(--clr-bg);
-      font-family: Poppins;
+      font-family: "Montserrat Variable", sans-serif;
       min-height: 100svh;
       display: flex;
       gap: 4rem;

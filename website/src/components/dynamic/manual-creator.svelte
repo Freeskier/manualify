@@ -5,14 +5,9 @@
   import TagsContainer from "./manual-tags/tags-container.svelte";
   import ManualCommentsContainer from "./manual-comments/manual-comments-container.svelte";
   import ManualNavigation from "./manual-navigation/manual-navigation.svelte";
-  import { eventsStore } from "./events-store.svelte.ts";
-
-  let expandCommentSection = $state(false);
-
-  $inspect(stepsStore.steps);
 </script>
 
-<div class="manual__container" class:expand-comments={expandCommentSection}>
+<div class="manual__container">
   <nav class="manual__navigation">
     <ManualNavigation />
   </nav>
@@ -28,9 +23,7 @@
     </div>
   </div>
   <aside class="manual__comments">
-    <ManualCommentsContainer
-      onExpand={() => (expandCommentSection = !expandCommentSection)}
-    />
+    <ManualCommentsContainer />
   </aside>
 </div>
 
@@ -38,12 +31,14 @@
   .manual__container {
     width: 100%;
     display: grid;
-    grid-template-columns: 20rem 1fr 20rem;
+    grid-template-columns: 20rem 1fr auto;
     flex: 1;
     transition: grid-template-columns 300ms ease-in-out;
   }
 
-  .manual__container.expand-comments {
+  :global(
+      .manual__container:has(.manual__comments.comments__container.expand)
+    ) {
     grid-template-columns: 20rem 1fr 30rem;
   }
 

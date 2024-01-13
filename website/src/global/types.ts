@@ -47,6 +47,19 @@ export type ManualEvent<T> = {
 };
 
 export type ManualEvents = {
-  test1: string
-  test2: number
-}
+  test1: string;
+  test2: number;
+};
+
+export type ManualComment = {
+  id: string;
+  parentId?: string;
+  content: string;
+  date: string;
+  authorName: string;
+  authorAvatar?: string;
+  isAuthor: boolean;
+  likes: number;
+  isReply: boolean;
+  replies?: ManualComment[];
+};

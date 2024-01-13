@@ -6,7 +6,8 @@
     "paths": {
       "@components/*": ["src/components/dynamic/*"],
       "@assets/*": ["src/assets/*"],
-      "@global/*": ["src/global/*"]
+      "@global/*": ["src/global/*"],
+      "@types": ["src/global/types.ts"]
     }
   }
 }
