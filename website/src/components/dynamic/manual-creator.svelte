@@ -38,7 +38,6 @@
     grid-template-columns: 20rem 1fr auto;
     flex: 1;
     transition: grid-template-columns 300ms ease-in-out;
-    min-height: 100vh;
   }
 
   :global(
@@ -50,10 +49,9 @@
   .manual__comments,
   .manual__navigation {
     position: sticky;
-    top: 0;
+    top: var(--header-height);
     align-self: start;
-    height: 100%;
-    max-height: 100svh;
+    height: calc(100vh - var(--header-height));
     background-color: var(--clr-neutral-200);
   }
 
@@ -77,7 +75,7 @@
     flex-direction: column;
     align-items: center;
     max-width: 70rem;
-    padding-inline: 2rem;
+    padding-inline: 1rem;
     width: 100%;
   }
   .manual__content-steps {

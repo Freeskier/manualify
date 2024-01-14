@@ -1,0 +1,25 @@
+---
+import logo from "@assets/logo.svg";
+---
+
+<header>
+  <img class="logo" src={logo.src} alt="manualify logo" />
+</header>
+
+<style>
+  header {
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: color-mix(in srgb, var(--clr-bg) 70%, transparent);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    border-bottom: 1px solid var(--clr-red-400);
+    padding: 1rem;
+  }
+
+  .logo {
+    height: 100%;
+  }
+</style>

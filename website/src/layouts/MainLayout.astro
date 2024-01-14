@@ -1,6 +1,7 @@
 ---
 import "@fontsource/ubuntu-mono";
 import "@fontsource-variable/montserrat";
+import Header from "../components/static/header.astro";
 ---
 
 <html lang="en">
@@ -12,6 +13,7 @@ import "@fontsource-variable/montserrat";
     <title>Manualify</title>
   </head>
   <body>
+    <Header />
     <slot />
   </body>
 
@@ -31,6 +33,8 @@ import "@fontsource-variable/montserrat";
     }
 
     :root {
+      --header-height: 4rem;
+
       --clr-bg: #2c2c2c;
       --clr-text: white;
       --clr-text-dark: #b3b3b3;
@@ -47,7 +51,6 @@ import "@fontsource-variable/montserrat";
       font-family: "Montserrat Variable", sans-serif;
       min-height: 100svh;
       display: flex;
-      gap: 4rem;
       flex-direction: column;
       align-items: center;
     }
