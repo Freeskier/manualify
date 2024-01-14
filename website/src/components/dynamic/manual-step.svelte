@@ -1,10 +1,9 @@
 <script lang="ts">
-  import Icon from "@iconify/svelte";
   import Chevron from "../../assets/icons/chevron.svelte";
   import {
     dndzone,
     type DndEvent,
-    SHADOW_ITEM_MARKER_PROPERTY_NAME,
+    SHADOW_PLACEHOLDER_ITEM_ID,
   } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import ManualToolbar from "./manual-toolbar.svelte";
@@ -55,12 +54,16 @@
   function handleConsider(e: CustomEvent<DndEvent<ManualComponent>>) {
     if (components.length !== e.detail.items.length) {
       stepsStore.canAnimateComponent = true;
-      grabbedFromHere = true;
-      stepsStore.grabbed = true;
-    } else {
-      grabbedFromHere = false;
-      stepsStore.grabbed = false;
     }
+
+    grabbedFromHere = e.detail.items.some(
+      (x) => x.id === SHADOW_PLACEHOLDER_ITEM_ID
+    );
+
+    if (e.detail.items.some((x) => x.id === SHADOW_PLACEHOLDER_ITEM_ID)) {
+      stepsStore.dragInSource = step.id;
+    }
+
     updateComponents(e.detail.items, id);
     dragDisabled = true;
   }
@@ -121,7 +124,9 @@
         {#each components as component (component.id)}
           <div
             style="position: relative;"
-            animate:flip={{ duration: grabbedFromHere ? 0 : DND_DURATION }}
+            animate:flip={{
+              duration: !grabbedFromHere ? 0 : DND_DURATION,
+            }}
           >
             <ManualStepComponent
               bind:component
@@ -208,13 +213,14 @@
   }
 
   .manual__step-heading-title h2 {
-    font-size: 2.125rem;
-    font-weight: 300;
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--clr-text-dark);
   }
 
   .manual__step-heading-title h2.manual__step-ordinal_number {
     font-family: "Ubuntu Mono", sans-serif;
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     color: #545454;
     font-weight: 600;
   }
@@ -262,6 +268,7 @@
     background-color: var(--clr-neutral-300);
     padding-inline: 2rem;
     position: relative;
+    box-shadow: 0px 12px 20px 2px rgba(0, 0, 0, 0.15);
   }
 
   .manual__step-content {

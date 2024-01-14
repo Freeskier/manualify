@@ -1,1 +1,1 @@
-export const DND_DURATION = 3000;
+export const DND_DURATION = 300;

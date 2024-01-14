@@ -3,17 +3,17 @@ import type { ManualComponent, ManualStep } from "../../global/types";
 //@ts-ignore
 let steps = $state<ManualStep[]>([]);
 let canAnimateComponent = $state<boolean>(true);
-let grabbed = $state<boolean>(true);
+let dragInSource = $state<string>("");
 
 export const stepsStore = {
   get steps() {
     return steps;
   },
-  get grabbed() {
-    return grabbed;
+  get dragInSource() {
+    return dragInSource;
   },
-  set grabbed(value: boolean) {
-    grabbed = value;
+  set dragInSource(value: string) {
+    dragInSource = value;
   },
   get canAnimateComponent() {
     return canAnimateComponent;

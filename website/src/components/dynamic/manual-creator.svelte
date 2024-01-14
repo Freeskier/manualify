@@ -5,6 +5,7 @@
   import TagsContainer from "./manual-tags/tags-container.svelte";
   import ManualCommentsContainer from "./manual-comments/manual-comments-container.svelte";
   import ManualNavigation from "./manual-navigation/manual-navigation.svelte";
+  import ManualControls from "./manual-controls.svelte";
 </script>
 
 <div class="manual__container">
@@ -12,15 +13,18 @@
     <ManualNavigation />
   </nav>
   <div class="manual__content">
-    <TagsContainer />
-    <div class="manual__content-steps">
-      {#each stepsStore.steps as step (step.id)}
-        <div animate:flip={{ duration: 500 }}>
-          <ManualStep {...step} bind:step />
-        </div>
-      {/each}
-      <button on:click={stepsStore.addNewStep}>Add Step</button>
+    <div class="manual__content-wrapper">
+      <TagsContainer />
+      <div class="manual__content-steps">
+        {#each stepsStore.steps as step (step.id)}
+          <div animate:flip={{ duration: 500 }}>
+            <ManualStep {...step} bind:step />
+          </div>
+        {/each}
+        <button on:click={stepsStore.addNewStep}>Add Step</button>
+      </div>
     </div>
+    <ManualControls />
   </div>
   <aside class="manual__comments">
     <ManualCommentsContainer />
@@ -34,6 +38,7 @@
     grid-template-columns: 20rem 1fr auto;
     flex: 1;
     transition: grid-template-columns 300ms ease-in-out;
+    min-height: 100vh;
   }
 
   :global(
@@ -63,11 +68,30 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5rem;
     justify-self: center;
+    width: 100%;
+  }
+
+  .manual__content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 70rem;
+    padding-inline: 2rem;
+    width: 100%;
   }
   .manual__content-steps {
     display: grid;
-    min-width: 1000px;
+    width: 100%;
+  }
+
+  @media (max-width: 1200px) {
+    .manual__container {
+      grid-template-columns: 18rem 1fr;
+    }
+
+    .manual__comments {
+      grid-column: span 2;
+    }
   }
 </style>

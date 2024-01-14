@@ -13,11 +13,7 @@
 </script>
 
 <div class="options__container" class:open={isOpen}>
-  <IconButton
-    class="options__button"
-    icon={OptionsAnimIcon}
-    bind:isOpen
-  />
+  <IconButton class="options__button" icon={OptionsAnimIcon} bind:isOpen />
   <div class="options__list-wrapper">
     <ul class="options__list">
       {#each options as option}
@@ -108,10 +104,11 @@
     gap: 0.75rem;
     width: 100%;
     padding: 0.5rem;
-    font-family: Poppins;
     color: var(--clr-neutral-500);
     background-color: var(--clr-neutral-300);
     transition: all 150ms ease-in-out;
+    font-size: 0.875rem;
+    font-weight: 500;
   }
 
   .options__item:hover {

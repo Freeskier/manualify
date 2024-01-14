@@ -31,7 +31,7 @@
     </button>
     <div class="manual__component-content">
       <h4>{componentName} #{component.index}</h4>
-      <div>{id}</div>
+      <div></div>
     </div>
     <IconButton
       icon="mdi:delete-outline"
@@ -53,9 +53,9 @@
 
   .manual__component-container h4 {
     color: var(--clr-neutral-500);
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
 
   .manual__component-content {

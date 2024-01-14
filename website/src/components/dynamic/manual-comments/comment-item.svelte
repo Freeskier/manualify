@@ -270,7 +270,7 @@
     color: var(--clr-neutral-500);
     display: grid;
     gap: 0.75rem;
-    margin-left: calc(var(--column-spacing) * -3.5);
+    margin-left: calc(var(--column-spacing) * -4);
     transition: margin 300ms ease-in-out;
   }
 

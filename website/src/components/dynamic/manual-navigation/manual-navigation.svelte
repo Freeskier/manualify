@@ -47,7 +47,11 @@
               {#each step.components as component (component.id)}
                 <li
                   animate:flip={{
-                    duration: stepsStore.grabbed ? 0 : DND_DURATION,
+                    duration:
+                      stepsStore.canAnimateComponent ||
+                      stepsStore.dragInSource === step.id
+                        ? DND_DURATION
+                        : 0,
                   }}
                 >
                   <TransitionContainer>
