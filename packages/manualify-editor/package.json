@@ -1,0 +1,16 @@
+{
+  "name": "@manualify/editor",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "dependencies": {
+    "@lexical/html": "^0.25.0",
+    "@lexical/rich-text": "^0.25.0",
+    "happy-dom": "^17.1.4",
+    "jsdom": "^26.0.0",
+    "lexical": "^0.25.0",
+    "undom": "^0.4.0"
+  }
+}

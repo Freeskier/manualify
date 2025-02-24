@@ -1,0 +1,8 @@
+{
+  "name": "manualify-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "manualify-app"
+  ]
+}
